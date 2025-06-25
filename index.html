@@ -3,389 +3,1115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025 경기여고 입학생을 위한 나만의 교육과정 설계 가이드</title>
+    <title>2025 입학생을 위한 경기여고 과목 선택 가이드</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (Background: #F8FAFC, Primary Text: #1E293B, Accent: #0369A1, Secondary Text: #475569) -->
-    <!-- Application Structure Plan: This customized guide retains the effective top-down flow of the original. It starts with a broader hook about the importance of subject choice, presents key trends, and then provides detailed information through interactive tabs. The major update is in the 'What and How It's Changing' section, which now compares different universities' approaches to student record evaluation in regular admissions, offering a wider perspective. The subject explorer remains a central, practical tool. The structure is designed to guide students from general trends to specific, actionable information relevant to their high school journey. -->
-    <!-- Visualization & Content Choices: 1. Comparative Cards (HTML/Tailwind): The bar chart in 'Regular Admissions Changes' is replaced with descriptive cards. This better illustrates the qualitative differences in how universities like SNU (holistic review), Kyung Hee (quantitative scoring), and Dongguk (holistic review) plan to evaluate student records. It avoids a potentially misleading direct numerical comparison and highlights the universal trend of incorporating the student record. 2. Interactive Dropdown (JS): The 'Subject Explorer' is maintained as a core interactive feature. It allows students to actively explore subject recommendations for their fields of interest, directly applying the guide's information to their own situation. 3. Phrasing adjustments: Replaced "strategy" and "examinee" with more guidance-oriented language for "students" to create a supportive, less pressure-filled tone. No SVG/Mermaid.js is used. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #F8FAFC;
-            color: #1E293B;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
         }
-        .nav-button {
+        .active-filter {
+            background-color: #587D71 !important;
+            color: #FFFFFF !important;
+            font-weight: 700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn {
             transition: all 0.3s ease;
         }
-        .nav-button.active {
-            background-color: #0369A1;
-            color: white;
-            font-weight: 700;
+        .card {
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .content-section {
-            display: none;
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .content-section.active {
+        .section-title::after {
+            content: '';
             display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #587D71;
+            margin-top: 12px;
         }
-        .subject-tag {
-            font-size: 0.75rem;
-            margin-left: 0.5rem;
-            padding: 0.125rem 0.5rem;
+        .domain-area-container, .grouped-area-container {
+            background-color: #F8F6F0;
+            border: 1px solid #E5E1D4;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        .subject-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
-        .tag-shared { background-color: #e0e7ff; color: #4338ca; }
-        .tag-general { background-color: #dcfce7; color: #166534; }
-        .tag-career { background-color: #fee2e2; color: #991b1b; }
-        .tag-fusion { background-color: #f3e8ff; color: #6b21a8; }
+        .notice-box {
+            margin-bottom: 1.5rem;
+            background-color: #FFFBEB;
+            border-left: 4px solid #FBBF24;
+            color: #92400E;
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .timetable-checkbox {
+            display: none; /* Hide the default checkbox */
+        }
+        .custom-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: transparent;
+            flex-shrink: 0;
+        }
+        .timetable-checkbox:checked + .custom-checkbox {
+            background-color: #6b7280;
+            border-color: #6b7280;
+            color: white;
+        }
+        /* Group-specific colors */
+        .timetable-checkbox.kme-group:checked + .custom-checkbox {
+            background-color: #3b82f6; /* Blue */
+            border-color: #3b82f6;
+        }
+        .timetable-checkbox.tech-group:checked + .custom-checkbox {
+            background-color: #10b981; /* Green */
+            border-color: #10b981;
+        }
+        .timetable-checkbox.art-group:checked + .custom-checkbox {
+            background-color: #8b5cf6; /* Purple */
+            border-color: #8b5cf6;
+        }
+
+        .timetable-checkbox:disabled + .custom-checkbox {
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
+        }
+        .timetable-checkbox:disabled ~ span {
+             cursor: not-allowed;
+             color: #9ca3af;
+        }
+        th, td {
+            text-align: center;
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-stone-50">
 
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-800 text-center">2025 경기여고 입학생을 위한<br>나만의 교육과정 설계 가이드</h1>
-            <p class="text-center text-xs text-slate-500 mt-2">(본 자료는 주요 대학의 2028학년도 입학전형 준비 자료 및 경기여고 2025 교육과정 선택 가이드북의 내용을 기초로 만든 참고용 가이드입니다.)</p>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-
-        <!-- Section 1: Hero -->
-        <section class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-sky-800">나의 미래를 그리는 시간, 배움의 로드맵 만들기</h2>
-            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
-                고교학점제는 정해진 시간표가 아닌, 나의 흥미와 적성에 따라 직접 시간표를 만들어가는 과정입니다.<br>이 가이드는 여러분의 성공적인 진로 설계를 돕기 위해 만들어졌습니다.
-            </p>
-        </section>
-
-        <!-- Section 2: Key Takeaways -->
-        <section class="mb-16">
-            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">새로운 대학진학의 핵심 트렌드</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-sky-500">
-                    <h4 class="font-bold text-lg mb-2">① 정성평가의 시대</h4>
-                    <p class="text-slate-600 text-sm">학생의 성장 과정, 탐구 역량, 잠재력 등을 종합적으로 평가하는 '정성평가'가 수시는 물론 정시까지 확대됩니다.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-amber-500">
-                    <h4 class="font-bold text-lg mb-2">② 학생부의 중요성</h4>
-                    <p class="text-slate-600 text-sm">어떤 과목을 '왜', '어떻게' 공부했는지를 보여주는 학교생활기록부가 핵심 평가 자료가 됩니다.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-teal-500">
-                    <h4 class="font-bold text-lg mb-2">③ 전공 연계 과목 선택</h4>
-                    <p class="text-slate-600 text-sm">수능에서 직접 평가하지 않는 심화과목 이수 여부가 학생부를 통해 확인됩니다. 희망 전공과 연계된 과목 선택이 중요합니다.</p>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-rose-500">
-                    <h4 class="font-bold text-lg mb-2">④ 대학별 평가방식 확인</h4>
-                    <p class="text-slate-600 text-sm">대학마다 학생부 평가 방식이 다를 수 있습니다. 목표 대학의 공식 발표를 반드시 확인해야 합니다.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: The 2028 Shift Explained -->
-        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
-            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">무엇이, 어떻게 바뀌는가?</h3>
-            <div class="border-b border-gray-200 mb-6">
-                <nav class="-mb-px flex justify-center space-x-2 sm:space-x-4" aria-label="Tabs">
-                    <button class="nav-button active whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab1">정시 평가의 변화</button>
-                    <button class="nav-button whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab2">학생부의 역할</button>
-                    <button class="nav-button whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab3">성공적인 학교생활을 위한 안내</button>
-                </nav>
-            </div>
-
-            <div id="tab1" class="content-section active">
-                <h4 class="text-xl font-semibold mb-4 text-center">정시모집, 학생부 영향력 확대</h4>
-                 <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">주요 대학들이 정시에서도 수능 100% 전형을 축소하고, 학생부 교과 내용을 반영하는 추세입니다. 대학별로 반영 방식에 차이가 있어 주의가 필요합니다.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
-                        <h5 class="font-bold text-lg mb-2">정성평가 중심 대학</h5>
-                        <p class="text-slate-600 mb-4">과목 이수 내역, 성취도, 세특(세부능력 및 특기사항) 등을 종합적으로 평가하여 학생의 학업 역량과 전공 적합성을 판단합니다.</p>
-                        <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">서울대</span>
-                        <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">건국대</span>
-                    </div>
-                     <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
-                        <h5 class="font-bold text-lg mb-2">정량평가 중심 대학</h5>
-                        <p class="text-slate-600 mb-4">대학이 지정한 핵심 권장과목 이수 여부에 따라 가산점을 부여하거나, 등급을 점수로 환산하여 반영하는 방식입니다.</p>
-                        <span class="inline-block bg-emerald-100 text-emerald-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">경희대 (예상)</span>
-                     </div>
-                </div>
-                 <p class="text-center text-slate-500 mt-6 text-sm">※ 위 내용은 각 대학의 발표안을 바탕으로 한 경향 분석이며, 최종안은 반드시 개별 대학의 모집요강을 확인해야 합니다.</p>
-            </div>
-
-            <div id="tab2" class="content-section">
-                <h4 class="text-xl font-semibold mb-4 text-center">학생부로 '나의 강점'을 증명하라</h4>
-                <p class="text-center text-slate-600 mb-6 max-w-2xl mx-auto">대학은 학생부를 통해 지원자의 학업 역량과 전공에 대한 관심도를 깊이 있게 평가하며, 이는 특정 과목에만 국한되지 않습니다. 여러분의 과목 선택 하나하나가 모여 진로에 대한 관심과 탐구 과정을 보여주는 중요한 이야기가 됩니다.</p>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
-                        <h5 class="font-bold text-lg mb-2">평가 핵심: 전공 연계 교과이수</h5>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1">
-                            <li><strong>핵심 권장과목:</strong> 전공 공부에 필수적인 과목</li>
-                            <li><strong>권장과목:</strong> 이수 시 도움이 되는 과목</li>
-                            <li><strong>과목 이수 위계:</strong> 과목 간 연계성과 심화 수준</li>
-                        </ul>
-                    </div>
-                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
-                         <h5 class="font-bold text-lg mb-2">정성평가 주요 항목</h5>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1">
-                            <li>자기주도적 학습 능력 및 탐구 역량</li>
-                            <li>지적 호기심과 학업에 대한 열정</li>
-                            <li>공동체 의식과 협업 능력</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="tab3" class="content-section">
-                <h4 class="text-xl font-semibold mb-4 text-center">성공적인 학교생활을 위한 세 가지 제안</h4>
-                 <p class="text-center text-slate-600 mb-6 max-w-2xl mx-auto">변화하는 입시 제도에 성공적으로 대비하기 위해 다음의 세 가지를 기억하고 고등학교 생활을 계획해보세요.</p>
-                <ul class="space-y-4">
-                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
-                        <span class="text-sky-600 font-bold text-2xl mr-4">1</span>
-                        <div>
-                            <h5 class="font-bold">핵심 기초 과목에 집중하기</h5>
-                            <p class="text-slate-600">희망 전공의 기초가 되는 일반선택 과목을 깊이 있게 공부하는 것이 중요합니다.</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
-                        <span class="text-sky-600 font-bold text-2xl mr-4">2</span>
-                        <div>
-                            <h5 class="font-bold">교육과정을 나만의 포트폴리오로</h5>
-                            <p class="text-slate-600">다양한 선택과목(진로, 융합)을 통해 자신의 학문적 관심사와 진로 목표를 구체적으로 보여주는 나만의 배움 지도를 만들어보세요.</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
-                        <span class="text-sky-600 font-bold text-2xl mr-4">3</span>
-                        <div>
-                            <h5 class="font-bold">자기주도적 학습 경험 쌓기</h5>
-                            <p class="text-slate-600">스스로 학습 목표를 설정하고 탐구하는 경험이 중요합니다. 지적 호기심을 바탕으로 한 다양한 학습 경험은 학생을 더욱 성장하게 합니다.</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Section 4: Recommended Subjects Explorer -->
-        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
-            <h3 class="text-2xl font-bold text-center mb-2 text-slate-800">전공별 권장과목 탐색기</h3>
-            <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
-                주요 대학의 발표와 2025 경기여고 교육과정 편제를 바탕으로 구성한 권장과목입니다. 희망 계열을 선택하여 어떤 과목을 이수하는 것이 좋을지 확인해보세요.
-            </p>
-            <div class="max-w-lg mx-auto mb-6">
-                <select id="majorSelector" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                    <option value="default" selected>-- 희망 계열을 선택하세요 --</option>
-                    <optgroup label="인문사회계열">
-                        <option value="humanities_lang">언어·문학</option>
-                        <option value="humanities_science">인문과학</option>
-                        <option value="business_econ">상경</option>
-                        <option value="law_admin">법·행정</option>
-                        <option value="media_info">광고·언론·정보</option>
-                        <option value="social_science">사회과학</option>
-                    </optgroup>
-                    <optgroup label="자연공학계열">
-                        <option value="natural_science">자연과학</option>
-                        <option value="life_science">생활과학</option>
-                        <option value="agriculture">농학</option>
-                        <option value="engineering_mech_elec">기계·전기·전자</option>
-                        <option value="engineering_architect">건축·환경</option>
-                        <option value="engineering_chem_bio">화학·생명</option>
-                        <option value="engineering_computer">정보·컴퓨터</option>
-                    </optgroup>
-                     <optgroup label="의약보건계열">
-                        <option value="medical_health">보건</option>
-                        <option value="medical_pharma">의·약학</option>
-                    </optgroup>
-                    <optgroup label="교육/예체능">
-                        <option value="education">교육</option>
-                        <option value="arts">예술</option>
-                        <option value="sports">체육</option>
-                    </optgroup>
-                </select>
-            </div>
-
-            <div id="subjectResult" class="min-h-[240px] bg-slate-50 p-6 rounded-lg border border-slate-200 transition-opacity duration-300 flex items-center justify-center">
-                 <p class="text-slate-500">계열을 선택하면 권장과목이 표시됩니다.</p>
-            </div>
-            <p class="text-center text-xs text-slate-500 mt-4">※ 경기여고 교육과정 선택 가이드북 12~22p의 내용을 기초로 만든 참고용 가이드입니다.</p>
-        </section>
+    <div class="container mx-auto p-4 md:p-8">
         
-        <!-- Section: Shared Campus -->
-        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
-            <h3 class="text-2xl font-bold text-center mb-4 text-slate-800">공유캠퍼스란?</h3>
-            <p class="text-center text-slate-600 max-w-3xl mx-auto">
-                **단위학교에서 개설하기 어려운 교과목을 학교와 학교가 서로 협력하여 수업을 공유하는 공동교육과정입니다.**<br>
-                2026년에는 '경기여고+언남고+개포고+양재고' 학생들이 공유캠퍼스 개설 과목을 함께 수강합니다. 각 학교에서 방과후에 운영되며, 학점이 인정되고, '5단계 성취평가'가 적용됩니다.
-                <a href="https://seoulhsc.sen.go.kr/fus/MI000000000000000140/html/cont0010v.do" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline font-semibold block mt-4">자세한 안내는 서울 고교학점제 지원센터 참조</a>
-            </p>
-        </section>
+        <header class="text-center my-8 md:my-16">
+            <h1 class="text-3xl md:text-5xl font-bold text-[#4B5D55]">2025 입학생을 위한 경기여고 과목 선택 가이드</h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600">나의 미래를 디자인하는 첫걸음, 나만의 교육과정 꾸리기</p>
+        </header>
 
-        <!-- Section 5: Sources -->
-        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
-            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">자료 출처 및 더 보기</h3>
-            <ul class="space-y-4 max-w-3xl mx-auto">
-                <li class="border-b pb-3">
-                    <a href="https://github.com/kyoyuk-data/snu-2028-plan/raw/main/SNU_2028_Admissions_Plan_Draft.pdf" download="서울대학교_2028학년도_입학전형_주요사항_안.pdf" class="text-sky-700 hover:underline font-medium">서울대학교, 2028학년도 대학 신입학생 입학전형 주요 사항(안) (PDF 원문 다운로드)</a>
-                    <p class="text-slate-500 text-sm mt-1">2028학년도 서울대 입학전형의 방향성을 담은 핵심 자료입니다.</p>
-                </li>
-                <li class="border-b pb-3">
-                    <a href="https://www.konkuk.ac.kr/bbs/konkuk/257/1149240/artclView.do" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">건국대학교, 2028년 입시 이수추천과목 'KU:PICK' 가이드 발표</a>
-                    <p class="text-slate-500 text-sm mt-1">계열별로 포괄적인 이수추천과목을 안내합니다.</p>
-                </li>
-                <li class="border-b pb-3">
-                    <a href="https://school.jbedu.kr/_cmm/fileDownload/gimjeygo/M010901/c4390c0521d70f2ea6391e37e58adf93" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">경희대학교, 2028 자연계열 학문분야의 고등학교 교과 이수 권장과목 안내</a>
-                    <p class="text-slate-500 text-sm mt-1">자연계열 학과를 중심으로 상세한 권장과목을 제시합니다.</p>
-                </li>
-                <li>
-                    <a href="https://kr.object.gov-ncloudstorage.com/khuiphakstorage/upload/20230329032924540_%EB%8C%80%ED%95%99%20%EC%9E%90%EC%97%B0%EA%B3%84%EC%97%B4%20%EC%A0%84%EA%B3%B5%20%ED%95%99%EB%AC%B8%20%EB%B6%84%EC%95%BC%EC%9D%98%20%EA%B5%90%EA%B3%BC%20%EC%9D%B4%EC%88%98%20%EA%B6%8C%EC%9E%A5%EA%B3%BC%EB%AA%A9%20%EC%95%88%EB%82%B4%20%EB%A6%AC%ED%94%8C%EB%A6%BF_fv(0329)_%EC%88%98%EC%A0%95%EB%B3%B8.pdf" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">5개 대학 공동연구: 대학 자연계열 전공 학문 분야의 교과 이수 권장과목 안내</a>
-                    <p class="text-slate-500 text-sm mt-1">경희대, 고려대, 연세대, 성균관대, 중앙대가 공동으로 연구한 자연계열 권장과목 가이드입니다.</p>
-                </li>
-            </ul>
-        </section>
+        <main>
+            <section id="intro" class="mb-16">
+                <div class="bg-white p-8 rounded-2xl shadow-sm">
+                    <h2 class="text-2xl font-bold mb-6 section-title text-[#4B5D55]">나만의 교육과정 설계하기</h2>
+                    <div class="space-y-6 text-gray-700 leading-relaxed">
+                        <p>고교학점제는 정해진 시간표를 따르는 수동적 학습에서 벗어나, 학생이 직접 진로와 적성에 맞춰 과목을 선택하고 교육과정을 설계하는 자기주도적 학습 여정입니다.</p>
+                        <p>대학은 성적표를 통해 단순히 점수를 확인하는 것이 아니라, '어떤 과목을', '왜', 그리고 '어떻게' 이수했는지를 보며 여러분의 지적 호기심, 전공에 대한 열정, 탐구 역량을 파악합니다. 따라서 여러분의 과목 선택 하나하나가 모여 '나'라는 사람의 학업 스토리를 만들게 됩니다.</p>
+                        <div class="bg-[#F8F6F0] p-6 rounded-lg border border-gray-200">
+                             <h3 class="font-bold text-lg mb-2 text-[#587D71]">2022 개정 교육과정의 과목 분류</h3>
+                             <ul class="list-disc list-inside space-y-2">
+                                 <li><span class="font-semibold">공통과목:</span> 1학년 때 배우는 기초 소양 함양을 위한 필수 과목입니다.</li>
+                                 <li><span class="font-semibold">일반선택:</span> 교과별 학문의 기본을 이해하는 과목입니다.</li>
+                                 <li><span class="font-semibold">진로선택:</span> 진로 방향에 맞춰 특정 분야를 깊이 있게 탐구하는 과목입니다.</li>
+                                 <li><span class="font-semibold">융합선택:</span> 학문 간 경계를 넘어 통합적 사고력을 기르는 새로운 과목입니다.</li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    </main>
+            <section id="navigator" class="mb-16">
+                <h2 class="text-2xl font-bold mb-8 text-center section-title mx-auto text-[#4B5D55]">과목별 네비게이터</h2>
+                <div id="filter-container" class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="전체">전체보기</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="국어">국어</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="수학">수학</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="영어">영어</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="사회">사회</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="과학">과학</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="기술·가정/정보">기술·가정/정보</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="제2외국어/한문">제2외국어</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="예술">예술</button>
+                    <button class="filter-btn bg-white px-4 py-2 rounded-full shadow-sm font-semibold text-gray-700 hover:bg-gray-100" data-filter="체육">체육</button>
+                </div>
 
-    <footer class="bg-slate-800 text-white mt-12">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm">
-            <p>본 페이지는 주요 대학의 2028학년도 입학전형(안)과 본교 교육과정을 바탕으로 제작된 참고용 자료입니다.</p>
-            <p class="mt-2 opacity-70">&copy; 2025 Major Selection Interactive Guide for Students.</p>
+                <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="social-studies-container" class="hidden"></div>
+                <div id="science-container" class="hidden"></div>
+                <div id="grouped-courses-container" class="hidden"></div>
+            </section>
+            
+            <section id="timetable-builder" class="mb-16">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold section-title mx-auto text-[#4B5D55] inline-block">나만의 선택과목 로드맵 만들어보기</h2>
+                    <div class="mt-4 text-sm text-center bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 rounded-r-lg inline-block">
+                        <p>이것은 가상의 수강신청 연습 페이지입니다. 실제 선택과목 수강신청은 2학년 1학기, 2학년 2학기를 대상으로 하며, 리로스쿨>교육과정>수강신청 페이지에서 합니다.</p>
+                        <p class="mt-1"><strong>(1차 수강신청 기간: 25.7.7~25.7.10)</strong></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div id="validation-panel" class="lg:col-span-3 p-6 bg-white rounded-2xl shadow-sm self-start">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-[#4B5D55]">과목 선택 전 체크! [교과(군)별 필수이수학점 안내]</h3>
+                            <a href="#" id="open-curriculum-pdf" class="text-sm font-semibold text-blue-600 hover:underline">우리학교 교육과정 편제표 보기 click</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm border-collapse">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="border p-2">교과(군)</th>
+                                        <th class="border p-2">필수이수학점</th>
+                                        <th class="border p-2">총족여부<br><span class="text-xs font-normal">(학교지정<br>과목으로 이수)</span></th>
+                                        <th class="border p-2">비고</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    <tr>
+                                        <td class="border p-2 font-semibold">국어</td>
+                                        <td class="border p-2">8</td>
+                                        <td class="border p-2 text-green-600 font-bold">O</td>
+                                        <td class="border p-2 text-left align-middle" rowspan="3"><strong class="text-blue-600 font-bold text-lg">8과목 이하(25학점 이내) 선택</strong><br><span class="text-xs">(국어/수학/영어(군)은 3년간 81학점을 초과할 수 없음, 학교지정과목으로 56학점 이수)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-2 font-semibold">수학</td>
+                                        <td class="border p-2">8</td>
+                                        <td class="border p-2 text-green-600 font-bold">O</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-2 font-semibold">영어</td>
+                                        <td class="border p-2">8</td>
+                                        <td class="border p-2 text-green-600 font-bold">O</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-2 font-semibold">한국사/사회/과학</td>
+                                        <td class="border p-2">6/8/10</td>
+                                        <td class="border p-2 text-green-600 font-bold">O</td>
+                                        <td class="border p-2 text-left">2~3학년 동안 과목 선택 수에 제한 없음.</td>
+                                    </tr>
+                                     <tr>
+                                        <td class="border p-2 font-semibold">체육</td>
+                                        <td class="border p-2">10</td>
+                                        <td class="border p-2 text-green-600 font-bold">O</td>
+                                        <td class="border p-2 text-left">학교지정과목으로 매학기 개설됨</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border p-2 font-semibold">기술가정/정보/제2외국어</td>
+                                        <td class="border p-2">16</td>
+                                        <td class="border p-2 text-red-600 font-bold">X</td>
+                                        <td class="border p-2 text-left"><strong class="text-lg text-green-600 font-bold">4과목 이상</strong>(11학점 이상) 이수해야 함.<br>1학년에서 논술(2)+기가/정보(3)=5학점 취득</td>
+                                    </tr>
+                                     <tr>
+                                        <td class="border p-2 font-semibold">예술</td>
+                                        <td class="border p-2">10</td>
+                                        <td class="border p-2 text-red-600 font-bold">X</td>
+                                        <td class="border p-2 text-left"><strong class="text-lg text-purple-600 font-bold">2과목 이상</strong>(6학점 이상) 이수해야 함.<br>1학년에서 미술(2)+음악(2)=4학점 취득</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="selection-panel" class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <!-- Timetable selection UI will be generated here -->
+                    </div>
+                </div>
+            </section>
+            
+            <section id="conclusion" class="text-center">
+                 <div class="bg-white p-8 rounded-2xl shadow-sm">
+                    <h2 class="text-2xl font-bold mb-6 section-title mx-auto text-[#4B5D55]">여러분의 빛나는 미래를 응원하며</h2>
+                    <div class="space-y-6 text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        <p>과목선택 가이드를 경직된 규칙이 아닌, 자신만의 길을 개척하는 데 필요한 나만의 나침반으로 활용하세요. 끊임없이 자신에게 질문하고, 선생님과 상담하며 가장 '나다운' 교육과정을 만들어가기를 바랍니다. 과목 선택이라는 기회를 통해, 자신만의 고유한 색깔로 빛나는 미래를 그려나가기를 진심으로 응원합니다.</p>
+                        <p class="mt-8 font-bold">- 삶이라는 바다를 힘차게 항해할 학생들의 등대가 되고싶은, 경기여고 선생님 일동 -</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center py-12 mt-8 text-gray-500">
+            <p>&copy; 2025 Kyunggi Girls' High School. All Rights Reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- Course Modal -->
+    <div id="course-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modal-title" class="text-xl font-bold text-gray-800"></h3>
+                <button id="close-course-modal-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="modal-content" class="flex-grow p-2 md:p-4 overflow-y-auto">
+                <!-- Image will be injected here -->
+            </div>
         </div>
-    </footer>
+    </div>
+    
+    <!-- PDF Viewer Modal -->
+     <div id="pdf-viewer-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-xl font-bold text-gray-800">교육과정 편제표</h3>
+                <button id="close-pdf-modal-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="flex-grow p-2 overflow-hidden">
+                <iframe id="pdf-iframe" src="" class="w-full h-full" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tabs = document.querySelectorAll('.nav-button');
-            const sections = document.querySelectorAll('.content-section');
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    sections.forEach(s => s.classList.remove('active'));
-                    document.getElementById(tab.dataset.tab).classList.add('active');
-                });
-            });
-            
-            const subjectDetails = {
-                // 일반선택
-                "사회와 문화": { type: "일반" }, "세계시민과 지리": { type: "일반" },
-                "현대사회와 윤리": { type: "일반" }, "세계사": { type: "일반" },
-                "물리학": { type: "일반" }, "화학": { type: "일반" }, "생명과학": { type: "일반" },
-                "지구과학": { type: "일반" }, "일본어Ⅰ": { type: "일반" }, "스페인어Ⅰ": { type: "일반" },
-                "스포츠 생활1": { type: "일반" }, "스포츠 생활2": { type: "일반" },
-                 // 진로선택
-                "기하": { type: "진로" }, "법과 사회": { type: "진로" },
-                "주제 탐구 독서": { type: "진로" }, "문학과 영상": { type: "진로" },
-                "데이터 과학": { type: "진로" }, "아동발달과 부모": { type: "진로" },
-                "동아시아 역사 기행": { type: "진로" }, "한국지리 탐구": { type: "진로" },
-                "영미 문학 읽기": { type: "진로" }, "윤리와 사상": { type: "진로" },
-                "금융과 생활": { type: "진로" }, "심화 영어 독해와 작문": { type: "진로" },
-                "경제": { type: "진로" }, "미적분Ⅱ": { type: "진로" },
-                "역학과 에너지": { type: "진로" }, "세포와 물질대사": { type: "진로" },
-                "음악 감상과 비평": { type: "진로" }, "미술 감상과 비평": { type: "진로" },
-                "인문학과 윤리": { type: "진로" }, "국제관계의 이해": { type: "진로" }, 
-                "인공지능 기초": { type: "진로" }, 
-                "운동과 건강": { type: "진로" }, "전자기와 양자":{type:"진로"}, "물질과 에너지":{type:"진로"}, "화학 반응의 세계":{type:"진로"}, "생물의 유전":{type:"진로"}, "지구시스템과학":{type:"진로"}, "행성우주과학":{type:"진로"}, "생활과학 탐구":{type:"진로"}, "도시의 미래 탐구":{type:"진로"}, "인공지능 수학":{type:"진로"}, "창의 공학 설계":{type:"진로"}, "과학의 역사와 문화":{type:"진로"},
-                // 융합선택
-                "사회문제 탐구": { type: "융합" }, "융합과학 탐구": { type: "융합" },
-                "매체 의사소통": { type: "융합" }, "미디어 영어": { type: "융합" },
-                "소프트웨어와 생활": { type: "융합" }, "미술과 매체": { type: "융합" }, 
-                "음악과 미디어": { type: "융합" }, "금융과 경제생활": { type: "융합"}, "실용 통계": {type: "융합"}, "윤리문제 탐구":{type:"융합"},
-                "기후변화와 환경생태": { type: "융합" },
-                 // 공유캠퍼스
-                "매체미술탐구": { type: "shared" }, "데이터과학과 머신러닝": { type: "shared" }, "국제 경제": { type: "shared" },
-                "국제 정치": { type: "shared" }, "프랑스어 회화": { type: "shared" }, "인간과 철학": { type: "shared" },
-                "과학과제연구": { type: "shared" }, "체육전공실기": { type: "shared" }
-            };
-
-            const majorData = {
-                humanities_lang: { title: "언어·문학 계열", majors: "국어국문, 동양어, 서양어, 영어영문, 통번역 등", general: ["사회와 문화", "세계시민과 지리", "현대사회와 윤리", "일본어Ⅰ", "스페인어Ⅰ"], career: ["주제 탐구 독서", "문학과 영상", "영미 문학 읽기", "심화 영어 독해와 작문", "동아시아 역사 기행", "윤리와 사상", "인문학과 윤리", "음악 감상과 비평", "미술 감상과 비평"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "음악과 미디어", "미술과 매체", "프랑스어 회화"] },
-                humanities_science: { title: "인문과학 계열", majors: "고고학, 문화재보존, 문화콘텐츠, 문헌정보, 사학, 인류학, 철학 등", general: ["세계사", "사회와 문화", "현대사회와 윤리", "세계시민과 지리"], career: ["주제 탐구 독서", "문학과 영상", "영미 문학 읽기", "한국지리 탐구", "동아시아 역사 기행", "법과 사회", "윤리와 사상", "인문학과 윤리"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "윤리문제 탐구", "인간과 철학"] },
-                business_econ: { title: "상경계열", majors: "경영, 경제, 금융보험, 무역·유통, 세무·회계, 호텔·관광경영 등", general: ["세계시민과 지리", "세계사", "사회와 문화", "현대사회와 윤리"], career: ["미적분Ⅱ", "기하", "경제", "법과 사회", "국제관계의 이해", "인공지능 기초", "데이터 과학"], fusion: ["금융과 경제생활", "사회문제 탐구", "실용 통계", "국제 경제", "미디어 영어"] },
-                law_admin: { title: "법·행정 계열", majors: "법학, 보건행정, 행정학 등", general: ["사회와 문화", "세계시민과 지리", "현대사회와 윤리"], career: ["주제 탐구 독서", "법과 사회", "경제", "윤리와 사상", "국제관계의 이해"], fusion: ["매체 의사소통", "사회문제 탐구", "기후변화와 환경생태", "국제 정치"] },
-                media_info: { title: "광고·언론·정보 계열", majors: "광고홍보, 언론정보, 정보미디어 등", general: ["세계시민과 지리", "세계사", "사회와 문화", "현대사회와 윤리"], career: ["문학과 영상", "주제 탐구 독서", "윤리와 사상", "동아시아 역사 기행", "법과 사회", "경제"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "윤리문제 탐구"] },
-                social_science: { title: "사회과학 계열", majors: "국제, 사회, 사회복지, 심리, 아동, 정치외교, 지리 등", general: ["사회와 문화", "현대사회와 윤리", "세계시민과 지리", "세계사"], career: ["법과 사회", "윤리와 사상", "국제관계의 이해", "동아시아 역사 기행", "한국지리 탐구", "아동발달과 부모", "경제"], fusion: ["사회문제 탐구", "윤리문제 탐구", "기후변화와 환경생태"] },
-                natural_science: { title: "자연과학 계열", majors: "대기과학, 물리, 생명과학, 수학, 지질, 천문, 통계, 화학 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["기하", "미적분Ⅱ", "인공지능 기초", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "지구시스템과학", "행성우주과학"], fusion: ["융합과학 탐구", "기후변화와 환경생태", "실용 통계", "과학과제연구"] },
-                life_science: { title: "생활과학 계열", majors: "식품영양, 의류학 등", general: ["세계사", "사회와 문화", "화학", "생명과학"], career: ["미적분Ⅱ", "경제", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "아동발달과 부모", "생활과학 탐구"], fusion: ["금융과 경제생활", "실용 통계"] },
-                agriculture: { title: "농학 계열", majors: "식물자원, 동물자원, 원예, 조경 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["미적분Ⅱ", "인공지능 기초", "한국지리 탐구", "도시의 미래 탐구", "역학과 에너지", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "지구시스템과학"], fusion: ["실용 통계", "기후변화와 환경생태"] },
-                engineering_mech_elec: { title: "기계·전기·전자 계열", majors: "기계공, 스마트모빌리티, 전기공, 전자공, 제어계측, 항공우주, 항공운항 등", general: ["물리학", "화학", "지구과학"], career: ["기하", "미적분Ⅱ", "인공지능 수학", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "지구시스템과학", "행성우주과학", "데이터 과학", "인공지능 기초"], fusion: ["소프트웨어와 생활", "융합과학 탐구", "창의 공학 설계"] },
-                engineering_architect: { title: "건축·환경 계열", majors: "건축, 건축공, 교통공, 도시공, 토목공, 해양공, 환경공 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["기하", "미적분Ⅱ", "도시의 미래 탐구", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "지구시스템과학", "데이터 과학"], fusion: ["융합과학 탐구", "과학의 역사와 문화"] },
-                engineering_chem_bio: { title: "화학·생명 계열", majors: "생명공, 섬유공, 식품공, 신소재공, 에너지자원, 재료공, 화장품, 화학공 등", general: ["물리학", "화학", "생명과학"], career: ["미적분Ⅱ", "기하", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전"], fusion: ["기후변화와 환경생태", "융합과학 탐구", "과학의 역사와 문화"] },
-                engineering_computer: { title: "정보·컴퓨터 계열", majors: "컴퓨터공, 소프트웨어, 인공지능, 빅데이터, 정보통신, 정보보안, 멀티미디어 등", general: ["물리학"], career: ["기하", "미적분Ⅱ", "경제", "인공지능 수학", "인공지능 기초", "데이터 과학", "역학과 에너지", "전자기와 양자"], fusion: ["실용 통계", "소프트웨어와 생활", "창의 공학 설계", "데이터과학과 머신러닝"] },
-                medical_health: { title: "보건 계열", majors: "간호, 물리치료, 응급구조, 임상병리, 재활치료, 치기공, 치위생 등", general: ["화학", "생명과학", "사회와 문화", "현대사회와 윤리"], career: ["물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전"], fusion: ["윤리문제 탐구"] },
-                medical_pharma: { title: "의·약학 계열", majors: "수의학, 약학, 의예, 치의예, 한의예 등", general: ["물리학", "화학", "생명과학", "사회와 문화", "현대사회와 윤리"], career: ["미적분Ⅱ", "윤리와 사상", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "인공지능 기초", "데이터 과학"], fusion: ["융합과학 탐구", "윤리문제 탐구", "인문학과 윤리"] },
-                education: { title: "교육 계열", majors: "언어/사회/수학/과학교육, 교육학, 초등/유아교육 등", general: ["사회와 문화", "현대사회와 윤리", "물리학", "화학", "생명과학", "지구과학"], career: ["주제 탐구 독서", "법과 사회", "경제", "기하", "미적분Ⅱ", "역학과 에너지", "세포와 물질대사", "동아시아 역사 기행", "윤리와 사상"], fusion: ["사회문제 탐구", "융합과학 탐구"] },
-                arts: { title: "예술 계열", majors: "음악, 미술, 디자인, 애니메이션, 연극 등", general: ["음악 연주와 창작", "미술창작", "세계사", "사회와 문화", "현대사회와 윤리", "세계시민과 지리"], career: ["음악 감상과 비평", "미술 감상과 비평", "문학과 영상", "법과 사회", "경제", "윤리와 사상", "한국지리 탐구"], fusion: ["음악과 미디어", "미술과 매체", "매체미술탐구"] },
-                sports: { title: "체육 계열", majors: "체육교육, 스포츠과학, 운동재활, 스포츠산업 등", general: ["사회와 문화", "현대사회와 윤리", "물리학", "생명과학"], career: ["경제", "역학과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "데이터 과학", "운동과 건강"], fusion: ["매체 의사소통", "실용 통계", "체육전공실기"] }
-            };
-
-            const majorSelector = document.getElementById('majorSelector');
-            const subjectResult = document.getElementById('subjectResult');
-
-            function createSubjectListItem(subjectName) {
-                const details = subjectDetails[subjectName] || { type: "" };
-                let tags = '';
-
-                if (details.type === '일반') tags += `<span class="subject-tag tag-general">일반</span>`;
-                else if (details.type === '진로') tags += `<span class="subject-tag tag-career">진로</span>`;
-                else if (details.type === '융합') tags += `<span class="subject-tag tag-fusion">융합</span>`;
-                else if (details.type === 'shared') tags += `<span class="subject-tag tag-shared">공유캠퍼스</span>`;
-
-                return `<li class="bg-gray-100 p-2 rounded-md flex items-center justify-between"><span>${subjectName}</span><div class="flex items-center">${tags}</div></li>`;
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- Data Definitions ---
+        const originalCourses = {
+            '국어': [
+                { name: '주제 탐구 독서', type: '진로선택', grade: '2-1' },
+                { name: '문학과 영상', type: '진로선택', grade: '2-2' },
+                { name: '독서 토론과 글쓰기', type: '융합선택', grade: '3-1' },
+                { name: '매체 의사소통', type: '융합선택', grade: '3-2' },
+                { name: '언어생활 탐구', type: '융합선택', grade: '3-2' },
+                { name: '화법과 언어', type: '일반선택', grade: '2-1' }, 
+                { name: '독서와 작문', type: '일반선택', grade: '2-2' }, 
+                { name: '문학', type: '일반선택', grade: '1-1' }, 
+            ],
+            '수학': [
+                { name: '기하', type: '진로선택', grade: '2-1' },
+                { name: '인공지능 수학', type: '진로선택', grade: '2-2' },
+                { name: '미적분Ⅱ', type: '융합선택', grade: '3-1' },
+                { name: '수학과제 탐구', type: '융합선택', grade: '3-1' },
+                { name: '수학과 문화', type: '융합선택', grade: '3-2' },
+                { name: '실용 통계', type: '융합선택', grade: '3-2' },
+                { name: '확률과 통계', type: '일반선택', grade: '2-2' },
+            ],
+            '영어': [
+                { name: '세계 문화와 영어', type: '융합선택', grade: '2-1' },
+                { name: '영미 문학 읽기', type: '진로선택', grade: '2-2' },
+                { name: '심화 영어', type: '진로선택', grade: '3-1' },
+                { name: '심화 영어 독해와 작문', type: '진로선택', grade: '3-2' },
+                { name: '미디어 영어', type: '융합선택', grade: '3-2' },
+                { name: '영어 독해와 작문', type: '일반선택', grade: '2-1' },
+            ],
+            '사회': {
+                '지리': [
+                    { name: '통합사회', type: '공통과목', grade: '1학년' },
+                    { name: '세계시민과 지리', type: '일반선택', grade: '2-1' },
+                    { name: '기후변화와 지속가능한 세계', type: '융합선택', grade: '2-2' },
+                    { name: '한국지리 탐구', type: '진로선택', grade: '3-1' },
+                    { name: '도시의 미래 탐구', type: '융합선택', grade: '3-2' },
+                    { name: '여행지리', type: '융합선택', grade: '3-2' },
+                ],
+                '일반사회': [
+                    { name: '금융과 경제생활', type: '융합선택', grade: '2-1' },
+                    { name: '법과 사회', type: '진로선택', grade: '2-1' },
+                    { name: '사회와 문화', type: '일반선택', grade: '2-2' },
+                    { name: '정치', type: '진로선택', grade: '2-2' },
+                    { name: '경제', type: '진로선택', grade: '3-1' },
+                    { name: '사회문제 탐구', type: '융합선택', grade: '3-1' },
+                    { name: '국제 관계의 이해', type: '융합선택', grade: '3-2' },
+                ],
+                '역사': [
+                    { name: '한국사', type: '공통과목', grade: '1학년' },
+                    { name: '동아시아 역사 기행', type: '진로선택', grade: '2-1' },
+                    { name: '세계사', type: '일반선택', grade: '2-2' },
+                    { name: '역사로 탐구하는 현대 세계', type: '융합선택', grade: '3-1' },
+                ],
+                '윤리': [
+                    { name: '현대사회와 윤리', type: '일반선택', grade: '2-1' },
+                    { name: '윤리문제 탐구', type: '융합선택', grade: '2-2' },
+                    { name: '윤리와 사상', type: '진로선택', grade: '3-1' },
+                    { name: '인문학과 윤리', type: '진로선택', grade: '3-2' },
+                ]
+            },
+            '과학': {
+                '물리학': [
+                    { name: '통합과학', type: '공통과목', grade: '1학년' },
+                    { name: '과학탐구실험', type: '공통과목', grade: '1학년'},
+                    { name: '물리학', type: '일반선택', grade: '2-1' },
+                    { name: '역학과 에너지', type: '진로선택', grade: '2-2' },
+                    { name: '전자기와 양자', type: '진로선택', grade: '3-1' },
+                ],
+                '화학': [
+                    { name: '화학', type: '일반선택', grade: '2-1' },
+                    { name: '물질과 에너지', type: '진로선택', grade: '2-2' },
+                    { name: '화학 반응의 세계', type: '진로선택', grade: '3-1'},
+                ],
+                '생명과학': [
+                    { name: '세포와 물질대사', type: '진로선택', grade: '2-1'},
+                    { name: '생명과학', type: '일반선택', grade: '2-2' },
+                    { name: '생물의 유전', type: '진로선택', grade: '3-1'},
+                ],
+                '지구과학': [
+                    { name: '지구과학', type: '일반선택', grade: '2-1' },
+                    { name: '지구시스템과학', type: '진로선택', grade: '2-2' },
+                    { name: '행성우주과학', type: '진로선택', grade: '3-1' },
+                ],
+                '융합': [
+                     { name: '융합과학 탐구', type: '융합선택', grade: '2-2'},
+                     { name: '기후변화와 환경생태', type: '융합선택', grade: '3-1'},
+                     { name: '과학의 역사와 문화', type: '융합선택', grade: '3-2'},
+                ]
+            },
+            '기술·가정/정보': {
+                '기술가정 계열': [
+                    { name: '생활과학 탐구', type: '진로선택', grade: '2-1' },
+                    { name: '아동발달과 부모', type: '융합선택', grade: '2-2' },
+                    { name: '지식 재산 일반', type: '융합선택', grade: '3-1' },
+                    { name: '창의 공학 설계', type: '융합선택', grade: '3-2' },
+                ],
+                '정보 계열': [
+                    { name: '데이터 과학', type: '진로선택', grade: '2-1' },
+                    { name: '정보과학(특목)', type: '진로선택', grade: '2-2', description: "<특목고 개설과목>컴퓨터 과학의 기본 개념과 원리 및 기술을 바탕으로 창의적이고 효율적으로 다양한 분야의 문제를 해결하는 역량을 기르는 과목이다." },
+                    { name: '인공지능 기초', type: '진로선택', grade: '3-1' },
+                    { name: '소프트웨어와 생활', type: '융합선택', grade: '3-2' },
+                ]
+            },
+            '제2외국어/한문': {
+                '스페인어': [
+                    { name: '스페인어', type: '일반선택', grade: '2-1' },
+                    { name: '스페인어 회화', type: '진로선택', grade: '2-2' },
+                    { name: '스페인어권 문화', type: '융합선택', grade: '3-1' },
+                    { name: '심화 스페인어', type: '진로선택', grade: '3-2' },
+                ],
+                '일본어': [
+                    { name: '일본어', type: '일반선택', grade: '2-1' },
+                    { name: '일본어 회화', type: '진로선택', grade: '2-2' },
+                    { name: '일본 문화', type: '융합선택', grade: '3-1' },
+                    { name: '심화 일본어', type: '진로선택', grade: '3-2' },
+                ]
+            },
+            '예술': {
+                '음악': [
+                    { name: '음악 연주와 창작', type: '진로선택', grade: '2-1' },
+                    { name: '음악 감상과 비평', type: '진로선택', grade: '2-2' },
+                    { name: '음악과 미디어', type: '융합선택', grade: '3-1' },
+                    { name: '음악콘텐츠 제작', type: '진로선택', grade: '3-2' },
+                ],
+                '미술': [
+                    { name: '미술 창작', type: '진로선택', grade: '2-1' },
+                    { name: '미술 감상과 비평', type: '진로선택', grade: '2-2' },
+                    { name: '미술과 매체', type: '융합선택', grade: '3-1' },
+                    { name: '조형', type: '진로선택', grade: '3-2' },
+                ]
+            },
+            '체육': [
+                { name: '체육1', type: '일반선택', grade: '1-1'},
+                { name: '체육2', type: '일반선택', grade: '1-2'},
+                { name: '스포츠 생활 1', type: '융합선택', grade: '2-1'},
+                { name: '스포츠 생활 2', type: '융합선택', grade: '2-2'},
+                { name: '스포츠 문화', type: '진로선택', grade: '3-1'},
+                { name: '스포츠 과학', type: '진로선택', grade: '3-2'}
+            ]
+        };
+        const timetableData = {
+            '2-1': {
+                limit: 5,
+                courses: {
+                    '국어': [{ name: '주제 탐구 독서', id: '21_kor_1', group: '국수영' }],
+                    '수학': [{ name: '기하', id: '21_math_1', group: '국수영' }],
+                    '영어': [{ name: '세계 문화와 영어', id: '21_eng_1', group: '국수영'}],
+                    '사회': [
+                        { name: '세계시민과 지리', id: '21_soc_1', group: '사과' },
+                        { name: '현대사회와 윤리', id: '21_soc_2', group: '사과' },
+                        { name: '법과 사회', id: '21_soc_3', group: '사과' },
+                        { name: '동아시아 역사 기행', id: '21_soc_4', group: '사과' },
+                        { name: '금융과 경제생활', id: '21_soc_5', group: '사과' },
+                    ],
+                    '과학': [
+                        { name: '물리학', id: '21_sci_1', group: '사과' },
+                        { name: '화학', id: '21_sci_2', group: '사과' },
+                        { name: '지구과학', id: '21_sci_3', group: '사과' },
+                        { name: '세포와 물질대사', id: '21_sci_4', group: '사과' },
+                    ],
+                    '기술·가정/정보': [
+                        { name: '생활과학 탐구', id: '21_tech_1', group: '기정제' },
+                        { name: '데이터 과학', id: '21_tech_2', group: '기정제' },
+                    ],
+                    '제2외국어/한문': [
+                        { name: '스페인어', id: '21_lang_1', group: '기정제' },
+                        { name: '일본어', id: '21_lang_2', group: '기정제' },
+                    ],
+                    '예술': [
+                        { name: '음악 연주와 창작', id: '21_art_1', group: '예술' },
+                        { name: '미술 창작', id: '21_art_2', group: '예술' },
+                    ]
+                }
+            },
+            '2-2': {
+                limit: 5,
+                courses: {
+                    '국어': [{ name: '문학과 영상', id: '22_kor_1', group: '국수영' }],
+                    '수학': [{ name: '인공지능 수학', id: '22_math_1', group: '국수영' }],
+                    '영어': [{ name: '영미 문학 읽기', id: '22_eng_1', group: '국수영' }],
+                    '사회': [
+                        { name: '사회와 문화', id: '22_soc_1', group: '사과' },
+                        { name: '세계사', id: '22_soc_2', group: '사과' },
+                        { name: '정치', id: '22_soc_3', group: '사과' },
+                        { name: '윤리문제 탐구', id: '22_soc_4', group: '사과' },
+                        { name: '기후변화와 지속가능한 세계', id: '22_soc_5', group: '사과' },
+                    ],
+                    '과학': [
+                        { name: '생명과학', id: '22_sci_1', group: '사과' },
+                        { name: '역학과 에너지', id: '22_sci_2', group: '사과' },
+                        { name: '물질과 에너지', id: '22_sci_3', group: '사과' },
+                        { name: '지구시스템과학', id: '22_sci_4', group: '사과' },
+                        { name: '융합과학 탐구', id: '22_sci_5', group: '사과' },
+                    ],
+                     '기술·가정/정보': [
+                        { name: '아동발달과 부모', id: '22_tech_1', group: '기정제' },
+                        { name: '정보과학(특목)', id: '22_tech_2', group: '기정제' },
+                    ],
+                    '제2외국어/한문': [
+                        { name: '스페인어 회화', id: '22_lang_1', group: '기정제' },
+                        { name: '일본어 회화', id: '22_lang_2', group: '기정제' },
+                    ],
+                    '예술': [
+                         { name: '음악 감상과 비평', id: '22_art_1', group: '예술' },
+                         { name: '미술 감상과 비평', id: '22_art_2', group: '예술' },
+                    ]
+                }
+            },
+            '3-1': {
+                limit: 6,
+                courses: {
+                    '국어': [{ name: '독서 토론과 글쓰기', id: '31_kor_1', group: '국수영' }],
+                    '수학': [
+                        { name: '미적분Ⅱ', id: '31_math_1', group: '국수영' },
+                        { name: '수학과제 탐구', id: '31_math_2', group: '국수영' },
+                    ],
+                    '영어': [{ name: '심화 영어', id: '31_eng_1', group: '국수영' }],
+                     '사회': [
+                        { name: '윤리와 사상', id: '31_soc_1', group: '사과' },
+                        { name: '경제', id: '31_soc_2', group: '사과' },
+                        { name: '한국지리 탐구', id: '31_soc_3', group: '사과' },
+                        { name: '사회문제 탐구', id: '31_soc_4', group: '사과' },
+                        { name: '역사로 탐구하는 현대 세계', id: '31_soc_5', group: '사과' },
+                    ],
+                    '과학': [
+                        { name: '전자기와 양자', id: '31_sci_1', group: '사과' },
+                        { name: '화학 반응의 세계', id: '31_sci_2', group: '사과' },
+                        { name: '생물의 유전', id: '31_sci_3', group: '사과' },
+                        { name: '행성우주과학', id: '31_sci_4', group: '사과' },
+                        { name: '기후변화와 환경생태', id: '31_sci_5', group: '사과' },
+                    ],
+                    '기술·가정/정보': [
+                        { name: '지식 재산 일반', id: '31_tech_1', group: '기정제' },
+                        { name: '인공지능 기초', id: '31_tech_2', group: '기정제' },
+                    ],
+                    '제2외국어/한문': [
+                        { name: '스페인어권 문화', id: '31_lang_1', group: '기정제' },
+                        { name: '일본 문화', id: '31_lang_2', group: '기정제' },
+                    ],
+                    '예술': [
+                        { name: '음악과 미디어', id: '31_art_1', group: '예술' },
+                        { name: '미술과 매체', id: '31_art_2', group: '예술' },
+                    ]
+                }
+            },
+            '3-2': {
+                limit: 9,
+                courses: {
+                     '국어': [
+                        { name: '매체 의사소통', id: '32_kor_1', group: '국수영' },
+                        { name: '언어생활 탐구', id: '32_kor_2', group: '국수영' }
+                    ],
+                    '수학': [
+                        { name: '수학과 문화', id: '32_math_1', group: '국수영' },
+                        { name: '실용 통계', id: '32_math_2', group: '국수영' },
+                    ],
+                    '영어': [
+                        { name: '심화 영어 독해와 작문', id: '32_eng_1', group: '국수영' },
+                        { name: '미디어 영어', id: '32_eng_2', group: '국수영' },
+                    ],
+                     '사회': [
+                        { name: '국제 관계의 이해', id: '32_soc_1', group: '사과' },
+                        { name: '인문학과 윤리', id: '32_soc_2', group: '사과' },
+                        { name: '도시의 미래 탐구', id: '32_soc_3', group: '사과' },
+                        { name: '여행지리', id: '32_soc_4', group: '사과' },
+                    ],
+                    '과학': [
+                        { name: '과학의 역사와 문화', id: '32_sci_1', group: '사과' },
+                    ],
+                    '기술·가정/정보': [
+                        { name: '창의 공학 설계', id: '32_tech_1', group: '기정제' },
+                        { name: '소프트웨어와 생활', id: '32_tech_2', group: '기정제' },
+                    ],
+                    '제2외국어/한문': [
+                        { name: '심화 스페인어', id: '32_lang_1', group: '기정제' },
+                        { name: '심화 일본어', id: '32_lang_2', group: '기정제' },
+                    ],
+                    '예술': [
+                        { name: '음악콘텐츠 제작', id: '32_art_1', group: '예술' },
+                        { name: '조형', id: '32_art_2', group: '예술' },
+                    ]
+                }
             }
+        };
 
-            majorSelector.addEventListener('change', (event) => {
-                const selectedMajor = event.target.value;
-                if (selectedMajor === 'default') {
-                    subjectResult.innerHTML = `<p class="text-slate-500">계열을 선택하면 권장과목이 표시됩니다.</p>`;
-                    subjectResult.style.opacity = '1';
-                    return;
+        const courseImageData = [
+            {"과목명":"경제","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/경제.jpg"},
+            {"과목명":"과학의 역사와 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/과학의_역사와_문화.jpg"},
+            {"과목명":"국제 관계의 이해","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/국제_관계의_이해.jpg"},
+            {"과목명":"금융과 경제생활","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/금융과_경제생활.jpg"},
+            {"과목명":"기술·가정","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/기술·가정.jpg"},
+            {"과목명":"기하","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/기하.jpg"},
+            {"과목명":"기후변화와 지속가능한 세계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/기후변화와_지속가능한_세계.jpg"},
+            {"과목명":"기후변화와 환경생태","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/기후변화와_환경생태.jpg"},
+            {"과목명":"대수","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/대수.jpg"},
+            {"과목명":"데이터 과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/데이터_과학.jpg"},
+            {"과목명":"도시의 미래 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/도시의_미래_탐구.jpg"},
+            {"과목명":"독서 토론과 글쓰기","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/독서_토론과_글쓰기.jpg"},
+            {"과목명":"독서와 작문","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/독서와_작문.jpg"},
+            {"과목명":"동아시아 역사 기행","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/동아시아_역사_기행.jpg"},
+            {"과목명":"매체 의사소통","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/매체_의사소통.jpg"},
+            {"과목명":"문학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/문학.jpg"},
+            {"과목명":"문학과 영상","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/문학과_영상.jpg"},
+            {"과목명":"물리와 화학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/물리와_화학.jpg"},
+            {"과목명":"물질과 에너지","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/물질과 에너지.jpg"},
+            {"과목명":"미디어 영어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미디어_영어.jpg"},
+            {"과목명":"미술","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미술.jpg"},
+            {"과목명":"미술 감상과 비평","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미술_감상과_비평.jpg"},
+            {"과목명":"미술 창작","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미술_창작.jpg"},
+            {"과목명":"미술과 매체","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미술과_매체.jpg"},
+            {"과목명":"미적분1","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미적분1.jpg"},
+            {"과목명":"미적분Ⅱ","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/미적분2.jpg"},
+            {"과목명":"법과 사회","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/법과_사회.jpg"},
+            {"과목명":"사회문제 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/사회문제_탐구.jpg"},
+            {"과목명":"사회와 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/사회와_문화.jpg"},
+            {"과목명":"생명과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/생명과학.jpg"},
+            {"과목명":"생물의 유전","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/생물의_유전.jpg"},
+            {"과목명":"생활과학 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/생활과학_탐구.jpg"},
+            {"과목명":"세계 문화와 영어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/세계_문화와_영어.jpg"},
+            {"과목명":"세계시민과 지리","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/세계_시민과_지리.jpg"},
+            {"과목명":"세계사","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/세계사.jpg"},
+            {"과목명":"세포와 물질대사","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/세포와_물질대사.jpg"},
+            {"과목명":"소프트웨어와 생활","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/소프트웨어와_생활.jpg"},
+            {"과목명":"수학과 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/수학과_문화.jpg"},
+            {"과목명":"수학과제 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/수학과제_탐구.jpg"},
+            {"과목명":"스페인어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스페인어.jpg"},
+            {"과목명":"스페인어 회화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스페인어_회화.jpg"},
+            {"과목명":"스페인어권 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스페인어권_문화.jpg"},
+            {"과목명":"스포츠 과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스포츠_과학.jpg"},
+            {"과목명":"스포츠 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스포츠_문화.jpg"},
+            {"과목명":"스포츠 생활 1","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스포츠_생활1.jpg"},
+            {"과목명":"스포츠 생활 2","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/스포츠_생활2.jpg"},
+            {"과목명":"실용 통계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/실용_통계.jpg"},
+            {"과목명":"심화 스페인어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/심화_스페인어.jpg"},
+            {"과목명":"심화 영어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/심화_영어.jpg"},
+            {"과목명":"심화 영어 독해와 작문","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/심화_영어_독해와_작문.jpg"},
+            {"과목명":"심화 일본어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/심화_일본어.jpg"},
+            {"과목명":"아동발달과 부모","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/아동발달과_부모.jpg"},
+            {"과목명":"언어생활 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/언어생활_탐구.jpg"},
+            {"과목명":"여행지리","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/여행지리.jpg"},
+            {"과목명":"역사로 탐구하는 현대 세계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/역사로_탐구하는_현대_세계.jpg"},
+            {"과목명":"역학과 에너지","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/역학과_에너지.jpg"},
+            {"과목명":"영미 문학 읽기","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/영미_문학_읽기.jpg"},
+            {"과목명":"영어 독해와 작문","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/영어_독해와_작문.jpg"},
+            {"과목명":"영어1","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/영어1.jpg"},
+            {"과목명":"영어2","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/영어2.jpg"},
+            {"과목명":"윤리문제 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/윤리문제_탐구.jpg"},
+            {"과목명":"윤리와 사상","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/윤리와_사상.jpg"},
+            {"과목명":"융합과학 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/융합과학_탐구.jpg"},
+            {"과목명":"음악","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/음악.jpg"},
+            {"과목명":"음악 감상과 비평","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/음악_감상과_비평.jpg"},
+            {"과목명":"음악 연주와 창작","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/음악_연주와_창작.jpg"},
+            {"과목명":"음악과 미디어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/음악과_미디어.jpg"},
+            {"과목명":"인공지능 기초","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/인공지능_기초.jpg"},
+            {"과목명":"인공지능 수학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/인공지능_수학.jpg"},
+            {"과목명":"인문학과 윤리","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/인문학과_윤리.jpg"},
+            {"과목명":"일본어 회화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/일본어_회화.jpg"},
+            {"과목명":"일본어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/일본어.jpg"},
+            {"과목명":"일본 문화","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/일본_문화.jpg"},
+            {"과목명":"전자기와 양자","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/전자기와_양자.jpg"},
+            {"과목명":"정보","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/정보.jpg"},
+            {"과목명":"정치","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/정치.jpg"},
+            {"과목명":"주제 탐구 독서","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/주제_탐구_독서.jpg"},
+            {"과목명":"지구과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/지구과학.jpg"},
+            {"과목명":"지구시스템과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/지구시스템과학.jpg"},
+            {"과목명":"지식 재산 일반","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/지식_재산_일반.jpg"},
+            {"과목명":"창의 공학 설계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/창의_공학_설계.jpg"},
+            {"과목명":"체육1","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/체육1.jpg"},
+            {"과목명":"체육2","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/체육2.jpg"},
+            {"과목명":"한국지리 탐구","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/한국지리_탐구.jpg"},
+            {"과목명":"행성우주과학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/행성우주과학.jpg"},
+            {"과목명":"현대사회와 윤리","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/현대사회와_윤리.jpg"},
+            {"과목명":"화법과 언어","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/화법과_언어.jpg"},
+            {"과목명":"화학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/화학.jpg"},
+            {"과목명":"화학 반응의 세계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/화학_반응의_세계.jpg"},
+            {"과목명":"확률과 통계","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/확률과_통계.jpg"},
+            {"과목명":"물리학","이미지_링크":"https://kgghs.github.io/kyunggi-guide2025/images/courses/물리학.jpg"}
+        ];
+        
+        const courseGrid = document.getElementById('course-grid');
+        const socialStudiesContainer = document.getElementById('social-studies-container');
+        const scienceContainer = document.getElementById('science-container');
+        const groupedCoursesContainer = document.getElementById('grouped-courses-container');
+        const filterContainer = document.getElementById('filter-container');
+        const modal = document.getElementById('course-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const closeModalBtn = document.getElementById('close-course-modal-btn');
+        const pdfModal = document.getElementById('pdf-viewer-modal');
+        const openPdfBtn = document.getElementById('open-curriculum-pdf');
+        const closePdfBtn = document.getElementById('close-pdf-modal-btn');
+        const pdfIframe = document.getElementById('pdf-iframe');
+        
+        // 데이터 병합 로직
+        const imageLinkMap = new Map(courseImageData.map(item => [item.과목명, item.이미지_링크]));
+
+        for (const subject in originalCourses) {
+            const courses = originalCourses[subject];
+            if (Array.isArray(courses)) {
+                courses.forEach(course => {
+                    const imageUrl = imageLinkMap.get(course.name);
+                    if (imageUrl) {
+                        course.imageUrl = imageUrl;
+                    }
+                });
+            } else { 
+                for (const area in courses) {
+                    courses[area].forEach(course => {
+                         const imageUrl = imageLinkMap.get(course.name);
+                         if (imageUrl) {
+                            course.imageUrl = imageUrl;
+                        }
+                    });
+                }
+            }
+        }
+
+
+        const getTypeClass = (type) => {
+            let style = 'subject-type-badge ';
+            switch(type) {
+                case '공통과목': return style + 'bg-gray-200 text-gray-800';
+                case '일반선택': return style + 'bg-sky-100 text-sky-800';
+                case '진로선택': return style + 'bg-emerald-100 text-emerald-800';
+                case '융합선택': return style + 'bg-amber-100 text-amber-800';
+                default: return style + 'bg-gray-100 text-gray-800';
+            }
+        };
+        
+        const openModal = (course) => {
+            const modalContent = document.getElementById('modal-content');
+
+            if (!course || !modal || !modalTitle || !modalContent) return;
+
+            modalTitle.textContent = `${course.name} 상세 정보`;
+            modalContent.innerHTML = ''; // Clear previous content
+
+            if (course.imageUrl) {
+                const img = document.createElement('img');
+                img.src = course.imageUrl;
+                img.alt = `${course.name} 상세 정보`;
+                img.className = "w-full h-auto rounded-lg";
+                modalContent.appendChild(img);
+            } else if (course.name === '조형' || course.name === '음악콘텐츠 제작' || (course.name === '정보과학(특목)' && course.description)) {
+                 modalContent.innerHTML = `<div class="p-4 text-left text-gray-700">${course.description.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
+            }
+            else {
+                modalContent.innerHTML = `<p class="p-4 text-center text-gray-600">이 과목의 상세 소개 이미지가 아직 준비되지 않았습니다.</p>`;
+            }
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = (modalElement) => {
+            if(!modalElement) return;
+            modalElement.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        const createCourseCard = (course) => {
+            const card = document.createElement('div');
+            card.setAttribute('data-course-name', course.name);
+            let cardText = '상세 정보를 보려면 클릭하세요';
+            let cardClasses = 'card bg-white p-6 rounded-lg shadow-sm flex flex-col border-l-4 border-gray-300';
+           
+            if (!course.imageUrl) {
+                 if(course.name === '조형' || course.name === '음악콘텐츠 제작' || course.name === '정보과학(특목)'){
+                     cardText = '상세정보 보기';
+                 } else {
+                     cardText = '상세 정보(이미지) 없음';
+                 }
+            }
+            
+            card.className = cardClasses;
+            card.innerHTML = `
+            <div class="flex-grow">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-bold text-gray-800">${course.name}</h3>
+                    <span class="text-xs font-semibold px-2 py-1 rounded-full ${getTypeClass(course.type).replace('subject-type-badge ', '')}">${course.type}</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4">개설 학기: ${course.grade}</p>
+                <p class="text-gray-600 leading-relaxed text-sm">${cardText}</p>
+            </div>`;
+            return card;
+        };
+
+
+        const renderDomainCourses = (container, data, areaOrder, areaColors, notice) => {
+            let content = notice ? `<div class="notice-box col-span-1 md:col-span-2 lg:col-span-4"><p class="font-bold">${notice.main}</p><p class="text-sm text-yellow-800 mt-2">${notice.sub}</p></div>` : '';
+            content += '<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">';
+            areaOrder.forEach(area => {
+                content += `<div class="domain-area-container border-t-4 ${areaColors[area]}">`;
+                content += `<h3 class="text-2xl font-bold text-center mb-6 text-gray-800">${area} 영역</h3>`;
+                const typeOrder = ['공통과목', '일반선택', '진로선택', '융합선택'];
+                typeOrder.forEach(type => {
+                    const coursesOfType = data[area].filter(c => c.type !== '공통과목');
+                    coursesOfType.sort((a,b) => (a.grade || 'Z').localeCompare(b.grade || 'Z'));
+                    if (coursesOfType.length > 0) {
+                        content += `<div class="mb-4">`;
+                        content += `<span class="${getTypeClass(type)}">${type}</span>`;
+                        content += '<div class="space-y-2 mt-2">';
+                        coursesOfType.forEach(course => {
+                            const card = createCourseCard(course);
+                            content += card.outerHTML;
+                        });
+                        content += '</div></div>';
+                    }
+                });
+                content += '</div>';
+            });
+            content += '</div>';
+            container.innerHTML = content;
+        };
+        
+        const renderGroupedCourses = (container, data, areaColors, notice) => {
+            let content = notice ? `<div class="col-span-1 md:col-span-2 notice-box"><p class="font-bold">${notice.main}</p></div>` : '';
+            content += `<div class="grid grid-cols-1 md:grid-cols-2 gap-8">`;
+            for(const area in data) {
+                 content += `<div class="grouped-area-container border-t-4 ${areaColors[area]}">`;
+                 content += `<h3 class="text-2xl font-bold text-center mb-6 text-gray-800">${area}</h3>`;
+                 content += '<div class="space-y-4">';
+                 data[area].forEach(course => {
+                     const card = createCourseCard(course);
+                     content += card.outerHTML;
+                 });
+                 content += '</div></div>';
+            }
+            content += `</div>`;
+            container.innerHTML = content;
+        };
+
+        const renderSocialStudies = () => {
+            const socialData = originalCourses['사회'];
+            const areaOrder = ['지리', '일반사회', '역사', '윤리'];
+            const areaColors = {
+                '지리': 'border-green-500', '일반사회': 'border-blue-500', '역사': 'border-red-500', '윤리': 'border-purple-500',
+            };
+            const notice = {
+                main: '사회교과(군)에서는 2,3학년 동안 자유로운 과목선택이 가능합니다.',
+                sub: '(1학년 공통과목으로 필수이수학점을 모두 충족함)'
+            };
+             renderDomainCourses(socialStudiesContainer, socialData, areaOrder, areaColors, notice);
+        };
+
+        const renderScience = () => {
+            const scienceData = originalCourses['과학'];
+            const areaOrder = ['물리학', '화학', '생명과학', '지구과학', '융합'];
+            const areaColors = {
+                '물리학': 'border-orange-500', '화학': 'border-cyan-500', '생명과학': 'border-lime-500', '지구과학': 'border-indigo-500', '융합': 'border-teal-500'
+            };
+             const notice = {
+                main: '과학교과(군)에서는 2,3학년 동안 자유로운 과목선택이 가능합니다.',
+                sub: '(1학년 공통과목으로 필수이수학점을 모두 충족함)'
+            };
+             renderDomainCourses(scienceContainer, scienceData, areaOrder, areaColors, notice);
+        };
+        
+        const displayCourses = (filter) => {
+            courseGrid.classList.add('hidden');
+            socialStudiesContainer.classList.add('hidden');
+            scienceContainer.classList.add('hidden');
+            groupedCoursesContainer.classList.add('hidden');
+
+            const groupedSubjects = ['기술·가정/정보', '제2외국어/한문', '예술'];
+            const domainSubjects = ['사회', '과학'];
+
+            if (domainSubjects.includes(filter)) {
+                if (filter === '사회') {
+                    socialStudiesContainer.classList.remove('hidden');
+                    renderSocialStudies();
+                } else {
+                    scienceContainer.classList.remove('hidden');
+                    renderScience();
+                }
+            } else if (groupedSubjects.includes(filter)) {
+                groupedCoursesContainer.classList.remove('hidden');
+                const data = originalCourses[filter];
+                const colors = {
+                    '기술가정 계열': 'border-pink-500', '정보 계열': 'border-gray-500',
+                    '스페인어': 'border-yellow-500', '일본어': 'border-red-400',
+                    '음악': 'border-blue-400', '미술': 'border-purple-400',
+                };
+                let notice = null;
+                if (filter === '기술·가정/정보' || filter === '제2외국어/한문') {
+                    notice = { main: '필수이수학점 충족을 위해 2,3학년동안 기술·가정/정보 및 제2외국어 교과(군)에서 총 4과목 이상 수강해야 합니다.' };
+                } else if (filter === '예술') {
+                    notice = { main: '필수이수학점 충족을 위해 2,3학년동안 예술 교과(군)에서 2과목 이상 수강해야 합니다.' };
+                }
+                renderGroupedCourses(groupedCoursesContainer, data, colors, notice);
+            } else {
+                courseGrid.classList.remove('hidden');
+                let gridContent = '';
+                
+                if (['국어', '수학', '영어'].includes(filter)) {
+                    gridContent += `<div class="col-span-1 md:col-span-2 lg:col-span-3 notice-box"><p class="font-bold">국어,수학,영어 교과(군)에서는 2,3학년동안 총 8과목 이내의 선택과목 수강이 가능합니다.</p><p class="text-sm text-yellow-800 mt-2">(학교지정과목으로 필수이수학점이 모두 충족되며, 국어-수학-영어과목의 총 이수학점이 81학점을 초과할 수 없음)</p></div>`;
                 }
 
-                const data = majorData[selectedMajor];
 
-                const generalSubjects = data.general || [];
-                const careerSubjects = data.career || [];
-                const fusionSubjects = data.fusion || [];
-
-                const html = `
-                    <div class="w-full text-left">
-                        <h4 class="text-xl font-bold mb-2 text-center text-sky-800">${data.title}</h4>
-                        <p class="text-center text-xs text-slate-500 mb-4">관련학과: ${data.majors || '다양한 전공'}</p>
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <div>
-                                <h5 class="font-semibold text-lg mb-2 text-green-700">일반 선택</h5>
-                                <ul class="list-none space-y-2">
-                                    ${generalSubjects.length > 0 ? generalSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
-                                </ul>
-                            </div>
-                            <div>
-                                <h5 class="font-semibold text-lg mb-2 text-red-700">진로 선택</h5>
-                                <ul class="list-none space-y-2">
-                                    ${careerSubjects.length > 0 ? careerSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
-                                </ul>
-                            </div>
-                             <div>
-                                <h5 class="font-semibold text-lg mb-2 text-purple-700">융합 선택</h5>
-                                <ul class="list-none space-y-2">
-                                    ${fusionSubjects.length > 0 ? fusionSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                if (filter === '체육') {
+                    const noteHTML = `<div class="col-span-1 md:col-span-2 lg:col-span-3 notice-box"><p class="font-bold">안내: 체육은 학교 지정과목으로 매학기 개설됩니다 (선택과목이 아닙니다).</p></div>`;
+                    gridContent += noteHTML;
+                }
                 
-                subjectResult.style.opacity = '0';
-                setTimeout(() => {
-                    subjectResult.innerHTML = html;
-                    subjectResult.style.opacity = '1';
-                }, 300);
-            });
+                let coursesToDisplay = [];
+
+                if (filter === '전체') {
+                    const allCourses = [];
+                    Object.entries(originalCourses).forEach(([subject, data]) => {
+                        let coursesToAdd = Array.isArray(data) ? data : Object.values(data).flat();
+                        coursesToAdd.forEach(course => {
+                            if (course.type !== '공통과목') {
+                                const displaySubject = course.name === '한국사' ? '한국사' : subject;
+                                allCourses.push({ ...course, displaySubject: displaySubject });
+                            }
+                        });
+                    });
+                    const uniqueCourses = Array.from(new Map(allCourses.map(c => [c.name, c])).values());
+                    const subjectOrder = ['국어', '수학', '영어', '사회', '과학', '한국사', '기술·가정/정보', '제2외국어/한문', '예술', '체육'];
+                    uniqueCourses.sort((a, b) => {
+                        const indexA = subjectOrder.indexOf(a.displaySubject);
+                        const indexB = subjectOrder.indexOf(b.displaySubject);
+                        if (indexA !== indexB) {
+                            return (indexA === -1 ? Infinity : indexA) - (indexB === -1 ? Infinity : indexB);
+                        }
+                        return (a.grade || 'Z').localeCompare(b.grade || 'Z');
+                    });
+                    coursesToDisplay = uniqueCourses;
+                } else {
+                    coursesToDisplay = Array.isArray(originalCourses[filter]) ? originalCourses[filter] : [];
+                    coursesToDisplay.sort((a, b) => (a.grade || 'Z').localeCompare(b.grade || 'Z'));
+                }
+                
+                if (coursesToDisplay.length === 0 && !domainSubjects.includes(filter) && !groupedSubjects.includes(filter)) {
+                    gridContent += `<p class="text-center text-gray-500 col-span-full">선택된 교과군의 과목이 없습니다.</p>`;
+                }
+
+                coursesToDisplay.forEach(course => {
+                    const card = createCourseCard(course);
+                    gridContent += card.outerHTML;
+                });
+                courseGrid.innerHTML = gridContent;
+            }
+        };
+
+        // Event Listeners
+        filterContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                currentFilter = e.target.dataset.filter;
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+                e.target.classList.add('active-filter');
+                displayCourses(currentFilter);
+            }
         });
+
+        document.body.addEventListener('click', (e) => {
+            const card = e.target.closest('[data-course-name]');
+            if (card) {
+                const courseName = card.dataset.courseName;
+                let foundCourse = null;
+
+                Object.values(originalCourses).forEach(subject => {
+                    if (foundCourse) return;
+                    if(Array.isArray(subject)) {
+                        const course = subject.find(c => c.name === courseName);
+                        if(course) foundCourse = course;
+                    } else {
+                         Object.values(subject).forEach(area => {
+                            if (foundCourse) return;
+                            const course = area.find(c => c.name === courseName);
+                            if(course) foundCourse = course;
+                         });
+                    }
+                });
+
+                if (foundCourse) {
+                    openModal(foundCourse);
+                }
+            }
+        });
+        
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => closeModal(modal));
+        }
+        if(modal){
+             modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+        }
+       
+        if(openPdfBtn) {
+            openPdfBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pdfUrl = 'https://kgghs.github.io/kyunggi-guide2025/2025%ED%95%99%EB%85%84%EB%8F%84%20%EC%9E%85%ED%95%99%EC%83%9D%20%EA%B5%90%EC%9C%A1%EA%B3%BC%EC%A0%95%20%EC%84%A0%ED%83%9D%20%EA%B0%80%EC%9D%B4%EB%93%9C%EB%B6%81.pdf';
+                if(pdfIframe) pdfIframe.src = pdfUrl;
+                if(pdfModal) pdfModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if(closePdfBtn) {
+            closePdfBtn.addEventListener('click', () => closeModal(pdfModal));
+        }
+        if(pdfModal){
+             pdfModal.addEventListener('click', (e) => {
+                if (e.target === pdfModal) {
+                    closeModal(pdfModal);
+                }
+            });
+        }
+        
+        // Initial Load
+        document.querySelector('.filter-btn[data-filter="전체"]').classList.add('active-filter');
+        displayCourses('전체');
+
+        // Timetable Builder Logic
+        const timetableBuilder = document.getElementById('timetable-builder');
+        if(timetableBuilder){
+            const selectionPanel = document.getElementById('selection-panel');
+            
+            const renderTimetable = () => {
+                let html = '';
+                for (const semester in timetableData) {
+                    const semesterInfo = timetableData[semester];
+                    html += `<div class="p-4 bg-white rounded-lg shadow-sm">
+                                <h4 class="font-bold text-lg mb-1">${semester.replace('-', '학년 ')}학기 <span class="font-normal text-sm text-red-500">(${semesterInfo.limit}개 선택)</span></h4>`;
+                    const designatedCourses = {
+                        '2-1': ['문학', '대수', '영어Ⅰ', '스포츠생활1'],
+                        '2-2': ['독서와 작문', '미적분', '영어Ⅱ', '스포츠생활2'],
+                        '3-1': ['화법과 언어', '확률과 통계', '영어독해와 작문', '스포츠 문화'],
+                        '3-2': ['스포츠 과학']
+                    };
+                    if(designatedCourses[semester]) {
+                        html += `<div class="text-xs text-gray-500 mb-3">
+                                    <span class="font-semibold">학교지정과목:</span> ${designatedCourses[semester].join(', ')}
+                                 </div>`;
+                    }
+                    html += `<div class="space-y-4">`;
+                    for(const subjectGroup in semesterInfo.courses) {
+                        html += `<div><p class="font-semibold text-sm text-gray-600 mb-1">${subjectGroup}</p><div class="space-y-1">`;
+                        semesterInfo.courses[subjectGroup].forEach(course => {
+                            let groupClass = '';
+                            if (course.group === '국수영') groupClass = 'kme-group';
+                            else if (course.group === '기정제') groupClass = 'tech-group';
+                            else if (course.group === '예술') groupClass = 'art-group';
+                            
+                            html += `<label for="${course.id}" class="flex items-center cursor-pointer">
+                                        <input type="checkbox" id="${course.id}" name="${semester}" data-group="${course.group}" class="timetable-checkbox ${groupClass}">
+                                        <span class="custom-checkbox"></span>
+                                        <span class="ml-2 block text-sm text-gray-900">${course.name}</span>
+                                    </label>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                    html += '</div></div>';
+                }
+                selectionPanel.innerHTML = html;
+                selectionPanel.addEventListener('change', handleCheckboxChange);
+            }
+
+            const handleCheckboxChange = () => {
+                const allCheckboxes = Array.from(selectionPanel.querySelectorAll('.timetable-checkbox'));
+                
+                // 1. Calculate counts for groups and semesters
+                const checkedGroups = { '국수영': [], '기정제': [], '예술': [], '사과': [] };
+                const checkedSemesters = {};
+                for (const semester in timetableData) {
+                    checkedSemesters[semester] = [];
+                }
+
+                allCheckboxes.forEach(box => {
+                    if (box.checked) {
+                        const group = box.dataset.group;
+                        const semester = box.name;
+                        if (checkedGroups[group]) checkedGroups[group].push(box);
+                        if (checkedSemesters[semester]) checkedSemesters[semester].push(box);
+                    }
+                });
+
+                // 2. Update numbering based on group counts
+                allCheckboxes.forEach(box => {
+                    box.nextElementSibling.textContent = ''; // Reset all numbers
+                });
+                Object.values(checkedGroups).forEach(groupArray => {
+                    groupArray.forEach((box, index) => {
+                        box.nextElementSibling.textContent = index + 1;
+                    });
+                });
+
+                // 3. Apply disabling logic
+                const kmeLimit = 8;
+                const kmeCount = checkedGroups['국수영'].length;
+
+                allCheckboxes.forEach(box => {
+                    // A checked box should always be enabled to allow unchecking
+                    if (box.checked) {
+                        box.disabled = false;
+                        return;
+                    }
+
+                    let isDisabled = false;
+
+                    // Condition 1: Check semester limit
+                    const semester = box.name;
+                    const semesterLimit = timetableData[semester].limit;
+                    const semesterCount = checkedSemesters[semester].length;
+                    if (semesterCount >= semesterLimit) {
+                        isDisabled = true;
+                    }
+
+                    // Condition 2: Check KME group limit
+                    const group = box.dataset.group;
+                    if (!isDisabled && group === '국수영' && kmeCount >= kmeLimit) {
+                        isDisabled = true;
+                    }
+                    
+                    box.disabled = isDisabled;
+                });
+            }
+
+            renderTimetable();
+        }
+    });
     </script>
 </body>
 </html>
