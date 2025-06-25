@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 경기여고 입학생을 위한 나만의 교육과정 설계 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Background: #F8FAFC, Primary Text: #1E293B, Accent: #0369A1, Secondary Text: #475569) -->
+    <!-- Application Structure Plan: This customized guide retains the effective top-down flow of the original. It starts with a broader hook about the importance of subject choice, presents key trends, and then provides detailed information through interactive tabs. The major update is in the 'What and How It's Changing' section, which now compares different universities' approaches to student record evaluation in regular admissions, offering a wider perspective. The subject explorer remains a central, practical tool. The structure is designed to guide students from general trends to specific, actionable information relevant to their high school journey. -->
+    <!-- Visualization & Content Choices: 1. Comparative Cards (HTML/Tailwind): The bar chart in 'Regular Admissions Changes' is replaced with descriptive cards. This better illustrates the qualitative differences in how universities like SNU (holistic review), Kyung Hee (quantitative scoring), and Dongguk (holistic review) plan to evaluate student records. It avoids a potentially misleading direct numerical comparison and highlights the universal trend of incorporating the student record. 2. Interactive Dropdown (JS): The 'Subject Explorer' is maintained as a core interactive feature. It allows students to actively explore subject recommendations for their fields of interest, directly applying the guide's information to their own situation. 3. Phrasing adjustments: Replaced "strategy" and "examinee" with more guidance-oriented language for "students" to create a supportive, less pressure-filled tone. No SVG/Mermaid.js is used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button.active {
+            background-color: #0369A1;
+            color: white;
+            font-weight: 700;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .subject-tag {
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        .tag-shared { background-color: #e0e7ff; color: #4338ca; }
+        .tag-general { background-color: #dcfce7; color: #166534; }
+        .tag-career { background-color: #fee2e2; color: #991b1b; }
+        .tag-fusion { background-color: #f3e8ff; color: #6b21a8; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-800 text-center">2025 경기여고 입학생을 위한<br>나만의 교육과정 설계 가이드</h1>
+            <p class="text-center text-xs text-slate-500 mt-2">(본 자료는 주요 대학의 2028학년도 입학전형 준비 자료 및 경기여고 2025 교육과정 선택 가이드북의 내용을 기초로 만든 참고용 가이드입니다.)</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+
+        <!-- Section 1: Hero -->
+        <section class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4 text-sky-800">나의 미래를 그리는 시간, 배움의 로드맵 만들기</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                고교학점제는 정해진 시간표가 아닌, 나의 흥미와 적성에 따라 직접 시간표를 만들어가는 과정입니다.<br>이 가이드는 여러분의 성공적인 진로 설계를 돕기 위해 만들어졌습니다.
+            </p>
+        </section>
+
+        <!-- Section 2: Key Takeaways -->
+        <section class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">새로운 대학진학의 핵심 트렌드</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-sky-500">
+                    <h4 class="font-bold text-lg mb-2">① 정성평가의 시대</h4>
+                    <p class="text-slate-600 text-sm">학생의 성장 과정, 탐구 역량, 잠재력 등을 종합적으로 평가하는 '정성평가'가 수시는 물론 정시까지 확대됩니다.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-amber-500">
+                    <h4 class="font-bold text-lg mb-2">② 학생부의 중요성</h4>
+                    <p class="text-slate-600 text-sm">어떤 과목을 '왜', '어떻게' 공부했는지를 보여주는 학교생활기록부가 핵심 평가 자료가 됩니다.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-teal-500">
+                    <h4 class="font-bold text-lg mb-2">③ 전공 연계 과목 선택</h4>
+                    <p class="text-slate-600 text-sm">수능에서 직접 평가하지 않는 심화과목 이수 여부가 학생부를 통해 확인됩니다. 희망 전공과 연계된 과목 선택이 중요합니다.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-rose-500">
+                    <h4 class="font-bold text-lg mb-2">④ 대학별 평가방식 확인</h4>
+                    <p class="text-slate-600 text-sm">대학마다 학생부 평가 방식이 다를 수 있습니다. 목표 대학의 공식 발표를 반드시 확인해야 합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The 2028 Shift Explained -->
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
+            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">무엇이, 어떻게 바뀌는가?</h3>
+            <div class="border-b border-gray-200 mb-6">
+                <nav class="-mb-px flex justify-center space-x-2 sm:space-x-4" aria-label="Tabs">
+                    <button class="nav-button active whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab1">정시 평가의 변화</button>
+                    <button class="nav-button whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab2">학생부의 역할</button>
+                    <button class="nav-button whitespace-nowrap py-3 px-4 bg-gray-100 text-slate-700 rounded-t-lg text-sm sm:text-base font-medium" data-tab="tab3">성공적인 학교생활을 위한 안내</button>
+                </nav>
+            </div>
+
+            <div id="tab1" class="content-section active">
+                <h4 class="text-xl font-semibold mb-4 text-center">정시모집, 학생부 영향력 확대</h4>
+                 <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">주요 대학들이 정시에서도 수능 100% 전형을 축소하고, 학생부 교과 내용을 반영하는 추세입니다. 대학별로 반영 방식에 차이가 있어 주의가 필요합니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <h5 class="font-bold text-lg mb-2">정성평가 중심 대학</h5>
+                        <p class="text-slate-600 mb-4">과목 이수 내역, 성취도, 세특(세부능력 및 특기사항) 등을 종합적으로 평가하여 학생의 학업 역량과 전공 적합성을 판단합니다.</p>
+                        <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">서울대</span>
+                        <span class="inline-block bg-sky-100 text-sky-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">건국대</span>
+                    </div>
+                     <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <h5 class="font-bold text-lg mb-2">정량평가 중심 대학</h5>
+                        <p class="text-slate-600 mb-4">대학이 지정한 핵심 권장과목 이수 여부에 따라 가산점을 부여하거나, 등급을 점수로 환산하여 반영하는 방식입니다.</p>
+                        <span class="inline-block bg-emerald-100 text-emerald-800 text-sm font-semibold mr-2 px-2.5 py-0.5 rounded-full">경희대 (예상)</span>
+                     </div>
+                </div>
+                 <p class="text-center text-slate-500 mt-6 text-sm">※ 위 내용은 각 대학의 발표안을 바탕으로 한 경향 분석이며, 최종안은 반드시 개별 대학의 모집요강을 확인해야 합니다.</p>
+            </div>
+
+            <div id="tab2" class="content-section">
+                <h4 class="text-xl font-semibold mb-4 text-center">학생부로 '나의 강점'을 증명하라</h4>
+                <p class="text-center text-slate-600 mb-6 max-w-2xl mx-auto">대학은 학생부를 통해 지원자의 학업 역량과 전공에 대한 관심도를 깊이 있게 평가하며, 이는 특정 과목에만 국한되지 않습니다. 여러분의 과목 선택 하나하나가 모여 진로에 대한 관심과 탐구 과정을 보여주는 중요한 이야기가 됩니다.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <h5 class="font-bold text-lg mb-2">평가 핵심: 전공 연계 교과이수</h5>
+                        <ul class="list-disc list-inside text-slate-600 space-y-1">
+                            <li><strong>핵심 권장과목:</strong> 전공 공부에 필수적인 과목</li>
+                            <li><strong>권장과목:</strong> 이수 시 도움이 되는 과목</li>
+                            <li><strong>과목 이수 위계:</strong> 과목 간 연계성과 심화 수준</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                         <h5 class="font-bold text-lg mb-2">정성평가 주요 항목</h5>
+                        <ul class="list-disc list-inside text-slate-600 space-y-1">
+                            <li>자기주도적 학습 능력 및 탐구 역량</li>
+                            <li>지적 호기심과 학업에 대한 열정</li>
+                            <li>공동체 의식과 협업 능력</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab3" class="content-section">
+                <h4 class="text-xl font-semibold mb-4 text-center">성공적인 학교생활을 위한 세 가지 제안</h4>
+                 <p class="text-center text-slate-600 mb-6 max-w-2xl mx-auto">변화하는 입시 제도에 성공적으로 대비하기 위해 다음의 세 가지를 기억하고 고등학교 생활을 계획해보세요.</p>
+                <ul class="space-y-4">
+                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
+                        <span class="text-sky-600 font-bold text-2xl mr-4">1</span>
+                        <div>
+                            <h5 class="font-bold">핵심 기초 과목에 집중하기</h5>
+                            <p class="text-slate-600">희망 전공의 기초가 되는 일반선택 과목을 깊이 있게 공부하는 것이 중요합니다.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
+                        <span class="text-sky-600 font-bold text-2xl mr-4">2</span>
+                        <div>
+                            <h5 class="font-bold">교육과정을 나만의 포트폴리오로</h5>
+                            <p class="text-slate-600">다양한 선택과목(진로, 융합)을 통해 자신의 학문적 관심사와 진로 목표를 구체적으로 보여주는 나만의 배움 지도를 만들어보세요.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-slate-50 p-4 rounded-lg">
+                        <span class="text-sky-600 font-bold text-2xl mr-4">3</span>
+                        <div>
+                            <h5 class="font-bold">자기주도적 학습 경험 쌓기</h5>
+                            <p class="text-slate-600">스스로 학습 목표를 설정하고 탐구하는 경험이 중요합니다. 지적 호기심을 바탕으로 한 다양한 학습 경험은 학생을 더욱 성장하게 합니다.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 4: Recommended Subjects Explorer -->
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
+            <h3 class="text-2xl font-bold text-center mb-2 text-slate-800">전공별 권장과목 탐색기</h3>
+            <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">
+                주요 대학의 발표와 2025 경기여고 교육과정 편제를 바탕으로 구성한 권장과목입니다. 희망 계열을 선택하여 어떤 과목을 이수하는 것이 좋을지 확인해보세요.
+            </p>
+            <div class="max-w-lg mx-auto mb-6">
+                <select id="majorSelector" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                    <option value="default" selected>-- 희망 계열을 선택하세요 --</option>
+                    <optgroup label="인문사회계열">
+                        <option value="humanities_lang">언어·문학</option>
+                        <option value="humanities_science">인문과학</option>
+                        <option value="business_econ">상경</option>
+                        <option value="law_admin">법·행정</option>
+                        <option value="media_info">광고·언론·정보</option>
+                        <option value="social_science">사회과학</option>
+                    </optgroup>
+                    <optgroup label="자연공학계열">
+                        <option value="natural_science">자연과학</option>
+                        <option value="life_science">생활과학</option>
+                        <option value="agriculture">농학</option>
+                        <option value="engineering_mech_elec">기계·전기·전자</option>
+                        <option value="engineering_architect">건축·환경</option>
+                        <option value="engineering_chem_bio">화학·생명</option>
+                        <option value="engineering_computer">정보·컴퓨터</option>
+                    </optgroup>
+                     <optgroup label="의약보건계열">
+                        <option value="medical_health">보건</option>
+                        <option value="medical_pharma">의·약학</option>
+                    </optgroup>
+                    <optgroup label="교육/예체능">
+                        <option value="education">교육</option>
+                        <option value="arts">예술</option>
+                        <option value="sports">체육</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div id="subjectResult" class="min-h-[240px] bg-slate-50 p-6 rounded-lg border border-slate-200 transition-opacity duration-300 flex items-center justify-center">
+                 <p class="text-slate-500">계열을 선택하면 권장과목이 표시됩니다.</p>
+            </div>
+            <p class="text-center text-xs text-slate-500 mt-4">※ 경기여고 교육과정 선택 가이드북 12~22p의 내용을 기초로 만든 참고용 가이드입니다.</p>
+        </section>
+        
+        <!-- Section: Shared Campus -->
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-16">
+            <h3 class="text-2xl font-bold text-center mb-4 text-slate-800">공유캠퍼스란?</h3>
+            <p class="text-center text-slate-600 max-w-3xl mx-auto">
+                **단위학교에서 개설하기 어려운 교과목을 학교와 학교가 서로 협력하여 수업을 공유하는 공동교육과정입니다.**<br>
+                2026년에는 '경기여고+언남고+개포고+양재고' 학생들이 공유캠퍼스 개설 과목을 함께 수강합니다. 각 학교에서 방과후에 운영되며, 학점이 인정되고, '5단계 성취평가'가 적용됩니다.
+                <a href="https://seoulhsc.sen.go.kr/fus/MI000000000000000140/html/cont0010v.do" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline font-semibold block mt-4">자세한 안내는 서울 고교학점제 지원센터 참조</a>
+            </p>
+        </section>
+
+        <!-- Section 5: Sources -->
+        <section class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+            <h3 class="text-2xl font-bold text-center mb-8 text-slate-800">자료 출처 및 더 보기</h3>
+            <ul class="space-y-4 max-w-3xl mx-auto">
+                <li class="border-b pb-3">
+                    <a href="https://github.com/kyoyuk-data/snu-2028-plan/raw/main/SNU_2028_Admissions_Plan_Draft.pdf" download="서울대학교_2028학년도_입학전형_주요사항_안.pdf" class="text-sky-700 hover:underline font-medium">서울대학교, 2028학년도 대학 신입학생 입학전형 주요 사항(안) (PDF 원문 다운로드)</a>
+                    <p class="text-slate-500 text-sm mt-1">2028학년도 서울대 입학전형의 방향성을 담은 핵심 자료입니다.</p>
+                </li>
+                <li class="border-b pb-3">
+                    <a href="https://www.konkuk.ac.kr/bbs/konkuk/257/1149240/artclView.do" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">건국대학교, 2028년 입시 이수추천과목 'KU:PICK' 가이드 발표</a>
+                    <p class="text-slate-500 text-sm mt-1">계열별로 포괄적인 이수추천과목을 안내합니다.</p>
+                </li>
+                <li class="border-b pb-3">
+                    <a href="https://school.jbedu.kr/_cmm/fileDownload/gimjeygo/M010901/c4390c0521d70f2ea6391e37e58adf93" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">경희대학교, 2028 자연계열 학문분야의 고등학교 교과 이수 권장과목 안내</a>
+                    <p class="text-slate-500 text-sm mt-1">자연계열 학과를 중심으로 상세한 권장과목을 제시합니다.</p>
+                </li>
+                <li>
+                    <a href="https://kr.object.gov-ncloudstorage.com/khuiphakstorage/upload/20230329032924540_%EB%8C%80%ED%95%99%20%EC%9E%90%EC%97%B0%EA%B3%84%EC%97%B4%20%EC%A0%84%EA%B3%B5%20%ED%95%99%EB%AC%B8%20%EB%B6%84%EC%95%BC%EC%9D%98%20%EA%B5%90%EA%B3%BC%20%EC%9D%B4%EC%88%98%20%EA%B6%8C%EC%9E%A5%EA%B3%BC%EB%AA%A9%20%EC%95%88%EB%82%B4%20%EB%A6%AC%ED%94%8C%EB%A6%BF_fv(0329)_%EC%88%98%EC%A0%95%EB%B3%B8.pdf" target="_blank" rel="noopener noreferrer" class="text-sky-700 hover:underline font-medium">5개 대학 공동연구: 대학 자연계열 전공 학문 분야의 교과 이수 권장과목 안내</a>
+                    <p class="text-slate-500 text-sm mt-1">경희대, 고려대, 연세대, 성균관대, 중앙대가 공동으로 연구한 자연계열 권장과목 가이드입니다.</p>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-white mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>본 페이지는 주요 대학의 2028학년도 입학전형(안)과 본교 교육과정을 바탕으로 제작된 참고용 자료입니다.</p>
+            <p class="mt-2 opacity-70">&copy; 2025 Major Selection Interactive Guide for Students.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.nav-button');
+            const sections = document.querySelectorAll('.content-section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    sections.forEach(s => s.classList.remove('active'));
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+            
+            const subjectDetails = {
+                // 일반선택
+                "사회와 문화": { type: "일반" }, "세계시민과 지리": { type: "일반" },
+                "현대사회와 윤리": { type: "일반" }, "세계사": { type: "일반" },
+                "물리학": { type: "일반" }, "화학": { type: "일반" }, "생명과학": { type: "일반" },
+                "지구과학": { type: "일반" }, "일본어Ⅰ": { type: "일반" }, "스페인어Ⅰ": { type: "일반" },
+                "스포츠 생활1": { type: "일반" }, "스포츠 생활2": { type: "일반" },
+                 // 진로선택
+                "기하": { type: "진로" }, "법과 사회": { type: "진로" },
+                "주제 탐구 독서": { type: "진로" }, "문학과 영상": { type: "진로" },
+                "데이터 과학": { type: "진로" }, "아동발달과 부모": { type: "진로" },
+                "동아시아 역사 기행": { type: "진로" }, "한국지리 탐구": { type: "진로" },
+                "영미 문학 읽기": { type: "진로" }, "윤리와 사상": { type: "진로" },
+                "금융과 생활": { type: "진로" }, "심화 영어 독해와 작문": { type: "진로" },
+                "경제": { type: "진로" }, "미적분Ⅱ": { type: "진로" },
+                "역학과 에너지": { type: "진로" }, "세포와 물질대사": { type: "진로" },
+                "음악 감상과 비평": { type: "진로" }, "미술 감상과 비평": { type: "진로" },
+                "인문학과 윤리": { type: "진로" }, "국제관계의 이해": { type: "진로" }, 
+                "인공지능 기초": { type: "진로" }, 
+                "운동과 건강": { type: "진로" }, "전자기와 양자":{type:"진로"}, "물질과 에너지":{type:"진로"}, "화학 반응의 세계":{type:"진로"}, "생물의 유전":{type:"진로"}, "지구시스템과학":{type:"진로"}, "행성우주과학":{type:"진로"}, "생활과학 탐구":{type:"진로"}, "도시의 미래 탐구":{type:"진로"}, "인공지능 수학":{type:"진로"}, "창의 공학 설계":{type:"진로"}, "과학의 역사와 문화":{type:"진로"},
+                // 융합선택
+                "사회문제 탐구": { type: "융합" }, "융합과학 탐구": { type: "융합" },
+                "매체 의사소통": { type: "융합" }, "미디어 영어": { type: "융합" },
+                "소프트웨어와 생활": { type: "융합" }, "미술과 매체": { type: "융합" }, 
+                "음악과 미디어": { type: "융합" }, "금융과 경제생활": { type: "융합"}, "실용 통계": {type: "융합"}, "윤리문제 탐구":{type:"융합"},
+                "기후변화와 환경생태": { type: "융합" },
+                 // 공유캠퍼스
+                "매체미술탐구": { type: "shared" }, "데이터과학과 머신러닝": { type: "shared" }, "국제 경제": { type: "shared" },
+                "국제 정치": { type: "shared" }, "프랑스어 회화": { type: "shared" }, "인간과 철학": { type: "shared" },
+                "과학과제연구": { type: "shared" }, "체육전공실기": { type: "shared" }
+            };
+
+            const majorData = {
+                humanities_lang: { title: "언어·문학 계열", majors: "국어국문, 동양어, 서양어, 영어영문, 통번역 등", general: ["사회와 문화", "세계시민과 지리", "현대사회와 윤리", "일본어Ⅰ", "스페인어Ⅰ"], career: ["주제 탐구 독서", "문학과 영상", "영미 문학 읽기", "심화 영어 독해와 작문", "동아시아 역사 기행", "윤리와 사상", "인문학과 윤리", "음악 감상과 비평", "미술 감상과 비평"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "음악과 미디어", "미술과 매체", "프랑스어 회화"] },
+                humanities_science: { title: "인문과학 계열", majors: "고고학, 문화재보존, 문화콘텐츠, 문헌정보, 사학, 인류학, 철학 등", general: ["세계사", "사회와 문화", "현대사회와 윤리", "세계시민과 지리"], career: ["주제 탐구 독서", "문학과 영상", "영미 문학 읽기", "한국지리 탐구", "동아시아 역사 기행", "법과 사회", "윤리와 사상", "인문학과 윤리"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "윤리문제 탐구", "인간과 철학"] },
+                business_econ: { title: "상경계열", majors: "경영, 경제, 금융보험, 무역·유통, 세무·회계, 호텔·관광경영 등", general: ["세계시민과 지리", "세계사", "사회와 문화", "현대사회와 윤리"], career: ["미적분Ⅱ", "기하", "경제", "법과 사회", "국제관계의 이해", "인공지능 기초", "데이터 과학"], fusion: ["금융과 경제생활", "사회문제 탐구", "실용 통계", "국제 경제", "미디어 영어"] },
+                law_admin: { title: "법·행정 계열", majors: "법학, 보건행정, 행정학 등", general: ["사회와 문화", "세계시민과 지리", "현대사회와 윤리"], career: ["주제 탐구 독서", "법과 사회", "경제", "윤리와 사상", "국제관계의 이해"], fusion: ["매체 의사소통", "사회문제 탐구", "기후변화와 환경생태", "국제 정치"] },
+                media_info: { title: "광고·언론·정보 계열", majors: "광고홍보, 언론정보, 정보미디어 등", general: ["세계시민과 지리", "세계사", "사회와 문화", "현대사회와 윤리"], career: ["문학과 영상", "주제 탐구 독서", "윤리와 사상", "동아시아 역사 기행", "법과 사회", "경제"], fusion: ["매체 의사소통", "미디어 영어", "사회문제 탐구", "윤리문제 탐구"] },
+                social_science: { title: "사회과학 계열", majors: "국제, 사회, 사회복지, 심리, 아동, 정치외교, 지리 등", general: ["사회와 문화", "현대사회와 윤리", "세계시민과 지리", "세계사"], career: ["법과 사회", "윤리와 사상", "국제관계의 이해", "동아시아 역사 기행", "한국지리 탐구", "아동발달과 부모", "경제"], fusion: ["사회문제 탐구", "윤리문제 탐구", "기후변화와 환경생태"] },
+                natural_science: { title: "자연과학 계열", majors: "대기과학, 물리, 생명과학, 수학, 지질, 천문, 통계, 화학 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["기하", "미적분Ⅱ", "인공지능 기초", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "지구시스템과학", "행성우주과학"], fusion: ["융합과학 탐구", "기후변화와 환경생태", "실용 통계", "과학과제연구"] },
+                life_science: { title: "생활과학 계열", majors: "식품영양, 의류학 등", general: ["세계사", "사회와 문화", "화학", "생명과학"], career: ["미적분Ⅱ", "경제", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "아동발달과 부모", "생활과학 탐구"], fusion: ["금융과 경제생활", "실용 통계"] },
+                agriculture: { title: "농학 계열", majors: "식물자원, 동물자원, 원예, 조경 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["미적분Ⅱ", "인공지능 기초", "한국지리 탐구", "도시의 미래 탐구", "역학과 에너지", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "지구시스템과학"], fusion: ["실용 통계", "기후변화와 환경생태"] },
+                engineering_mech_elec: { title: "기계·전기·전자 계열", majors: "기계공, 스마트모빌리티, 전기공, 전자공, 제어계측, 항공우주, 항공운항 등", general: ["물리학", "화학", "지구과학"], career: ["기하", "미적분Ⅱ", "인공지능 수학", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "지구시스템과학", "행성우주과학", "데이터 과학", "인공지능 기초"], fusion: ["소프트웨어와 생활", "융합과학 탐구", "창의 공학 설계"] },
+                engineering_architect: { title: "건축·환경 계열", majors: "건축, 건축공, 교통공, 도시공, 토목공, 해양공, 환경공 등", general: ["물리학", "화학", "생명과학", "지구과학"], career: ["기하", "미적분Ⅱ", "도시의 미래 탐구", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "지구시스템과학", "데이터 과학"], fusion: ["융합과학 탐구", "과학의 역사와 문화"] },
+                engineering_chem_bio: { title: "화학·생명 계열", majors: "생명공, 섬유공, 식품공, 신소재공, 에너지자원, 재료공, 화장품, 화학공 등", general: ["물리학", "화학", "생명과학"], career: ["미적분Ⅱ", "기하", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전"], fusion: ["기후변화와 환경생태", "융합과학 탐구", "과학의 역사와 문화"] },
+                engineering_computer: { title: "정보·컴퓨터 계열", majors: "컴퓨터공, 소프트웨어, 인공지능, 빅데이터, 정보통신, 정보보안, 멀티미디어 등", general: ["물리학"], career: ["기하", "미적분Ⅱ", "경제", "인공지능 수학", "인공지능 기초", "데이터 과학", "역학과 에너지", "전자기와 양자"], fusion: ["실용 통계", "소프트웨어와 생활", "창의 공학 설계", "데이터과학과 머신러닝"] },
+                medical_health: { title: "보건 계열", majors: "간호, 물리치료, 응급구조, 임상병리, 재활치료, 치기공, 치위생 등", general: ["화학", "생명과학", "사회와 문화", "현대사회와 윤리"], career: ["물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전"], fusion: ["윤리문제 탐구"] },
+                medical_pharma: { title: "의·약학 계열", majors: "수의학, 약학, 의예, 치의예, 한의예 등", general: ["물리학", "화학", "생명과학", "사회와 문화", "현대사회와 윤리"], career: ["미적분Ⅱ", "윤리와 사상", "물질과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "인공지능 기초", "데이터 과학"], fusion: ["융합과학 탐구", "윤리문제 탐구", "인문학과 윤리"] },
+                education: { title: "교육 계열", majors: "언어/사회/수학/과학교육, 교육학, 초등/유아교육 등", general: ["사회와 문화", "현대사회와 윤리", "물리학", "화학", "생명과학", "지구과학"], career: ["주제 탐구 독서", "법과 사회", "경제", "기하", "미적분Ⅱ", "역학과 에너지", "세포와 물질대사", "동아시아 역사 기행", "윤리와 사상"], fusion: ["사회문제 탐구", "융합과학 탐구"] },
+                arts: { title: "예술 계열", majors: "음악, 미술, 디자인, 애니메이션, 연극 등", general: ["음악 연주와 창작", "미술창작", "세계사", "사회와 문화", "현대사회와 윤리", "세계시민과 지리"], career: ["음악 감상과 비평", "미술 감상과 비평", "문학과 영상", "법과 사회", "경제", "윤리와 사상", "한국지리 탐구"], fusion: ["음악과 미디어", "미술과 매체", "매체미술탐구"] },
+                sports: { title: "체육 계열", majors: "체육교육, 스포츠과학, 운동재활, 스포츠산업 등", general: ["사회와 문화", "현대사회와 윤리", "물리학", "생명과학"], career: ["경제", "역학과 에너지", "화학 반응의 세계", "세포와 물질대사", "생물의 유전", "데이터 과학", "운동과 건강"], fusion: ["매체 의사소통", "실용 통계", "체육전공실기"] }
+            };
+
+            const majorSelector = document.getElementById('majorSelector');
+            const subjectResult = document.getElementById('subjectResult');
+
+            function createSubjectListItem(subjectName) {
+                const details = subjectDetails[subjectName] || { type: "" };
+                let tags = '';
+
+                if (details.type === '일반') tags += `<span class="subject-tag tag-general">일반</span>`;
+                else if (details.type === '진로') tags += `<span class="subject-tag tag-career">진로</span>`;
+                else if (details.type === '융합') tags += `<span class="subject-tag tag-fusion">융합</span>`;
+                else if (details.type === 'shared') tags += `<span class="subject-tag tag-shared">공유캠퍼스</span>`;
+
+                return `<li class="bg-gray-100 p-2 rounded-md flex items-center justify-between"><span>${subjectName}</span><div class="flex items-center">${tags}</div></li>`;
+            }
+
+            majorSelector.addEventListener('change', (event) => {
+                const selectedMajor = event.target.value;
+                if (selectedMajor === 'default') {
+                    subjectResult.innerHTML = `<p class="text-slate-500">계열을 선택하면 권장과목이 표시됩니다.</p>`;
+                    subjectResult.style.opacity = '1';
+                    return;
+                }
+
+                const data = majorData[selectedMajor];
+
+                const generalSubjects = data.general || [];
+                const careerSubjects = data.career || [];
+                const fusionSubjects = data.fusion || [];
+
+                const html = `
+                    <div class="w-full text-left">
+                        <h4 class="text-xl font-bold mb-2 text-center text-sky-800">${data.title}</h4>
+                        <p class="text-center text-xs text-slate-500 mb-4">관련학과: ${data.majors || '다양한 전공'}</p>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <h5 class="font-semibold text-lg mb-2 text-green-700">일반 선택</h5>
+                                <ul class="list-none space-y-2">
+                                    ${generalSubjects.length > 0 ? generalSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-lg mb-2 text-red-700">진로 선택</h5>
+                                <ul class="list-none space-y-2">
+                                    ${careerSubjects.length > 0 ? careerSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
+                                </ul>
+                            </div>
+                             <div>
+                                <h5 class="font-semibold text-lg mb-2 text-purple-700">융합 선택</h5>
+                                <ul class="list-none space-y-2">
+                                    ${fusionSubjects.length > 0 ? fusionSubjects.map(createSubjectListItem).join('') : '<li class="text-gray-400 text-sm">추천 과목이 없습니다.</li>'}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                subjectResult.style.opacity = '0';
+                setTimeout(() => {
+                    subjectResult.innerHTML = html;
+                    subjectResult.style.opacity = '1';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
